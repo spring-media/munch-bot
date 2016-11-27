@@ -1,0 +1,23 @@
+{
+  "name": "munch-bot",
+  "version": "1.0.0",
+  "description": "crawling pace and alerting slack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "del": "2.2.2",
+    "gulp": "3.9.1",
+    "gulp-install": "0.6.0",
+    "gulp-zip": "3.2.0",
+    "run-sequence": "1.2.2",
+    "node-aws-lambda": "0.1.8"
+  },
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "node-fetch": "^1.6.3"
+  }
+}
