@@ -16,13 +16,30 @@ exports.handler = function () {
 };
 
 function extractMenueMessage(json) {
+
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`;
+
     return json.data[dayKey]
         .map(meal => meal.html)
         .map(html => cheerio.load(html))
-        .map($ => `• \`${$('.gerichtname').text()}\` (${$('.gerichtpreis').text()})`)
+        .map(selector => formatMeal(selector))
         .join('\n');
+}
+
+function formatMeal(selector) {
+    const gericht = selector('.gerichtname').text();
+    let preis = selector('.gerichtpreis').text();
+    let kategorie = selector('.kategorie').text().trim();
+    if (kategorie) {
+        kategorie = `\n\n_${kategorie}_\n`
+    }
+
+    if (preis) {
+        preis = `(_${preis}_)`
+    }
+
+    return `${kategorie}• \`${gericht}\` ${preis}`
 }
 
 function fmt(str) {
@@ -30,7 +47,9 @@ function fmt(str) {
 }
 
 function slackMenues(message) {
-    const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}"}`;
+    const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
+    const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
+
     nfetch(
         'https://hooks.slack.com/services/<PutHereTheTokenOfTheSlackIntegrationHook>',
         {method: 'POST', body: body}
