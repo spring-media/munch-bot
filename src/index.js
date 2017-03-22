@@ -2,7 +2,7 @@
 
 const cheerio = require('cheerio');
 const nfetch = require('node-fetch');
-
+const config = require('./config');
 
 exports.handler = function () {
     const weekday = new Date().getDay();
@@ -51,7 +51,7 @@ function slackMenues(message) {
     const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
 
     nfetch(
-        'https://hooks.slack.com/services/<PutHereTheTokenOfTheSlackIntegrationHook>',
+        'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
         {method: 'POST', body: body}
     ).then(function (res) {
         return res.text();

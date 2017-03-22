@@ -1,7 +1,7 @@
 module.exports = {
     region: 'eu-central-1',
     handler: 'index.handler',
-    role: "arn:aws:iam::<ReplaceWithAwsAccountId>:role/MinimalLambdaRole",
+    role: "arn:aws:iam::<awsAccountId>:role/MinimalLambdaRole",
     functionName: "munchbot",
     timeout: 10,
     memorySize: 128,
