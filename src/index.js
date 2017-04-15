@@ -5,15 +5,33 @@ const nfetch = require('node-fetch');
 const config = require('./config');
 
 exports.handler = function () {
-    const weekday = new Date().getDay();
-    if (weekday < 1 || weekday > 5) {
-        console.log('Today is no workday! I will enjoy the weekend!');
-    }
-    nfetch(`http://pace.webspeiseplan.de/index.php?model=meals&outlet=4&plusTage=0`)
-        .then(res => res.json())
-        .then(json => slackMenues(extractMenueMessage(json)))
-        .catch(err => console.log(err, err.stack));
+    if (!isHoliday()) {
+        const weekday = new Date().getDay();
+        if (weekday < 1 || weekday > 5) {
+            console.log('Today is no workday! I will enjoy the weekend!');
+            return;
+        }
+    
+        nfetch(`http://pace.webspeiseplan.de/index.php?model=meals&outlet=4&plusTage=0`)
+            .then(res => res.json())
+            .then(json => slackMenues(extractMenueMessage(json)))
+            .catch(err => console.log(err, err.stack));  
+    }  
 };
+
+function isHoliday() {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const eastern2017 = new Date(2017,3,17)
+    
+    if (today.getTime() === eastern2017.getTime()) {
+        console.log('Yippi ei hye, its holiday');
+        slackEasternDay();
+        return true;
+    }
+
+    return false;
+}
 
 function extractMenueMessage(json) {
 
@@ -46,10 +64,20 @@ function fmt(str) {
     return ('0' + str).slice(-2);
 }
 
+function slackEasternDay() {
+    const body = `{"channel": "@general", "text": "_The Munch-Bot kindly presents:_ *Ostereier!!!* :hatching_chick:\n\nFrohe Ostern allen Kollegen!"}`;
+
+    sendSlack(body);
+
+}
 function slackMenues(message) {
     const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
     const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
 
+    sendSlack(body);
+}
+
+function sendSlack(body) {
     nfetch(
         'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
         {method: 'POST', body: body}
