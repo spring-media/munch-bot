@@ -4,6 +4,13 @@ const cheerio = require('cheerio');
 const nfetch = require('node-fetch');
 const config = require('./config');
 
+const holidayMap = {};
+holidayMap["2017317"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Ostereier!!!* :hatching_chick:\n\nFrohe Ostern allen Kollegen!"};
+holidayMap["201741"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit!!!* :hatching_chick:\n\n"};
+holidayMap["2017425"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt!!!* :hatching_chick:\n\n"};
+
+
+
 exports.handler = function () {
     if (!isHoliday()) {
         const weekday = new Date().getDay();
@@ -20,13 +27,12 @@ exports.handler = function () {
 };
 
 function isHoliday() {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const eastern2017 = new Date(2017,3,17)
-    
-    if (today.getTime() === eastern2017.getTime()) {
-        console.log('Yippi ei hye, its holiday');
-        slackEasternDay();
+    const today = new Date();    
+    const todayString = today.getFullYear() + "" + today.getMonth() + "" + today.getDate();
+
+    if (todayString in holidayMap) {
+        console.log("found holiday ");
+        sendSlack(JSON.stringify(holidayMap[todayString]));
         return true;
     }
 
@@ -64,12 +70,6 @@ function fmt(str) {
     return ('0' + str).slice(-2);
 }
 
-function slackEasternDay() {
-    const body = `{"channel": "@general", "text": "_The Munch-Bot kindly presents:_ *Ostereier!!!* :hatching_chick:\n\nFrohe Ostern allen Kollegen!"}`;
-
-    sendSlack(body);
-
-}
 function slackMenues(message) {
     const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
     const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
