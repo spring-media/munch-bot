@@ -5,11 +5,18 @@ const nfetch = require('node-fetch');
 const config = require('./config');
 
 const holidayMap = {};
-holidayMap["2017317"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Ostereier!!!* :hatching_chick:\n\nFrohe Ostern allen Kollegen!"};
+//1.Mai 2017
 holidayMap["201741"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit!!!* :hatching_chick:\n\n"};
-holidayMap["2017425"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt!!!* :hatching_chick:\n\n"};
-
-
+//Himmelfahrt 2017
+holidayMap["2017425"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt!!!* :beers:\n\n"};
+//Pfingstmontag 
+holidayMap["201755"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Pfingsten!!!* \n\n"};
+//3.10.
+holidayMap["201793"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Einheit!!!* :flag-de:\n\n"};
+//25.12
+holidayMap["20171125"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten!!!* :santa:\n\n"};
+//26.12
+holidayMap["20171126"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten!!!* :santa:\n\n"};
 
 exports.handler = function () {
     if (!isHoliday()) {
