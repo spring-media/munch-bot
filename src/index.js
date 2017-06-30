@@ -5,12 +5,6 @@ const nfetch = require('node-fetch');
 const config = require('./config');
 
 const holidayMap = {};
-//1.Mai 2017
-holidayMap["201741"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit!!!* :hatching_chick:\n\n"};
-//Himmelfahrt 2017
-holidayMap["2017425"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt!!!* :beers:\n\n"};
-//Pfingstmontag 
-holidayMap["201755"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Pfingsten!!!* \n\n"};
 //3.10.
 holidayMap["201793"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Einheit!!!* :flag-de:\n\n"};
 //25.12
@@ -19,18 +13,20 @@ holidayMap["20171125"] = {"channel": "#general", "text": "_The Munch-Bot kindly 
 holidayMap["20171126"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten!!!* :santa:\n\n"};
 
 exports.handler = function () {
+    console.log("start munch-bot")
     if (!isHoliday()) {
         const weekday = new Date().getDay();
         if (weekday < 1 || weekday > 5) {
             console.log('Today is no workday! I will enjoy the weekend!');
             return;
         }
-    
+        console.log("fetch menu from pace")
         nfetch(`http://pace.webspeiseplan.de/index.php?model=meals&outlet=4&plusTage=0`)
             .then(res => res.json())
             .then(json => slackMenues(extractMenueMessage(json)))
             .catch(err => console.log(err, err.stack));  
     }  
+    console.log("finish munch-bot")
 };
 
 function isHoliday() {
@@ -47,10 +43,11 @@ function isHoliday() {
 }
 
 function extractMenueMessage(json) {
-
+    console.log("extract menu and create slack json")
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`;
 
+    console.log("extract menu with day -> " + dayKey)
     return json.data[dayKey]
         .map(meal => meal.html)
         .map(html => cheerio.load(html))
@@ -78,6 +75,7 @@ function fmt(str) {
 }
 
 function slackMenues(message) {
+    console.log("create body message now with footer and body")
     const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
     const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
 
@@ -85,6 +83,7 @@ function slackMenues(message) {
 }
 
 function sendSlack(body) {
+    console.log("send to slack now with message: " + body)
     nfetch(
         'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
         {method: 'POST', body: body}
