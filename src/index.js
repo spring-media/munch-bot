@@ -88,6 +88,12 @@ function sendSlack(body) {
         'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
         {method: 'POST', body: body}
     ).then(function (res) {
-        return res.text();
+        if (!res.ok) {
+            res.text().then(text => {
+                console.log('Response from Slack not ok', res.status, res.statusText, text);
+            })
+            throw Error(res.statusText);
+        }
+        console.log('Successfully sent to slack');
     }).catch(err=>console.log('Error talking to slack', err, err.stack));
 }
