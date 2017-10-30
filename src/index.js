@@ -5,8 +5,8 @@ const nfetch = require('node-fetch');
 const config = require('./config');
 
 const holidayMap = {};
-//3.10.
-holidayMap["201793"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Einheit!!!* :flag-de:\n\n"};
+//31.10.
+holidayMap["2017931"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Reformationstag!!!* :kirche:\n\n"};
 //25.12
 holidayMap["20171125"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten!!!* :santa:\n\n"};
 //26.12
