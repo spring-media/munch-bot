@@ -5,12 +5,18 @@ const nfetch = require('node-fetch');
 const config = require('./config');
 
 const holidayMap = {};
-//31.10.
-holidayMap["2017931"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Reformationstag!!!* :kirche:\n\n"};
-//25.12
-holidayMap["20171125"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten!!!* :santa:\n\n"};
-//26.12
-holidayMap["20171126"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten!!!* :santa:\n\n"};
+//31.03
+holidayMap["2018230"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Karfreitag!!!*\n\n"};
+//02.04.
+holidayMap["20180302"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Ostern!!!* :egg: \n\n"};
+//1.5. 
+holidayMap["20180401"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit!!!*\n\n"};
+//10.5. 
+holidayMap["20180410"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt!!!* :beers:\n\n"};
+//21.5. 
+holidayMap["20180421"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Pfingsten!!!*\n\n"};
+//3.10. 
+holidayMap["20180903"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der deutschen Einheit!!!*\n\n"};
 
 exports.handler = function () {
     console.log("start munch-bot")
@@ -57,6 +63,7 @@ function extractMenueMessage(json) {
 
 function formatMeal(selector) {
     const gericht = selector('.gerichtname').text();
+    let modifiedGericht = gericht.replace(/"/g, '\\"');
     let preis = selector('.gerichtpreis').text();
     let kategorie = selector('.kategorie').text().trim();
     if (kategorie) {
@@ -67,7 +74,7 @@ function formatMeal(selector) {
         preis = `(_${preis}_)`
     }
 
-    return `${kategorie}• \`${gericht}\` ${preis}`
+    return `${kategorie}• \`${modifiedGericht}\` ${preis}`
 }
 
 function fmt(str) {
@@ -78,7 +85,7 @@ function slackMenues(message) {
     console.log("create body message now with footer and body")
     const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
     const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
-
+    
     sendSlack(body);
 }
 
