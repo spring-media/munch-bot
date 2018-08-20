@@ -3,40 +3,41 @@
 const cheerio = require('cheerio');
 const nfetch = require('node-fetch');
 const config = require('./config');
+const puppeteer = require('puppeteer');
+const util = require('util')
 
 const holidayMap = {};
 //31.03
 holidayMap["2018230"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Karfreitag!!!*\n\n"};
 //02.04.
 holidayMap["20180302"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Ostern!!!* :egg: \n\n"};
-//1.5. 
+//1.5.
 holidayMap["20180401"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit!!!*\n\n"};
-//10.5. 
+//10.5.
 holidayMap["20180410"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt!!!* :beers:\n\n"};
-//21.5. 
+//21.5.
 holidayMap["20180421"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Pfingsten!!!*\n\n"};
-//3.10. 
+//3.10.
 holidayMap["20180903"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der deutschen Einheit!!!*\n\n"};
 
-exports.handler = function () {
+exports.handler = async function () {
     console.log("start munch-bot")
     if (!isHoliday()) {
-        const weekday = new Date().getDay();
-        if (weekday < 1 || weekday > 5) {
-            console.log('Today is no workday! I will enjoy the weekend!');
-            return;
-        }
-        console.log("fetch menu from pace")
-        nfetch(`http://pace.webspeiseplan.de/index.php?model=meals&outlet=4&plusTage=0`)
-            .then(res => res.json())
-            .then(json => slackMenues(extractMenueMessage(json)))
-            .catch(err => console.log(err, err.stack));  
-    }  
+      const weekday = new Date().getDay();
+      if (weekday < 1 || weekday > 5) {
+          console.log('Today is no workday! I will enjoy the weekend!');
+          return;
+      }
+      const menu = await fetchMenu();
+      const formattedMenu = await formatMenu(menu);
+
+      slackMenues(formattedMenu);
+    }
     console.log("finish munch-bot")
-};
+}
 
 function isHoliday() {
-    const today = new Date();    
+    const today = new Date();
     const todayString = today.getFullYear() + "" + today.getMonth() + "" + today.getDate();
 
     if (todayString in holidayMap) {
@@ -44,37 +45,66 @@ function isHoliday() {
         sendSlack(JSON.stringify(holidayMap[todayString]));
         return true;
     }
-
     return false;
 }
 
-function extractMenueMessage(json) {
-    console.log("extract menu and create slack json")
-    const today = new Date();
-    const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`;
+async function fetchMenu() {
+  console.log("fetch menu from pace")
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://pace.webspeiseplan.de/Menu');
 
-    console.log("extract menu with day -> " + dayKey)
-    return json.data[dayKey]
-        .map(meal => meal.html)
-        .map(html => cheerio.load(html))
-        .map(selector => formatMeal(selector))
-        .join('\n');
+  await page.evaluate(() => {
+    localStorage.clear();
+    localStorage.setItem('location', 1);
+    localStorage.setItem('outlet', 4);
+    localStorage.setItem('inited', true);
+    localStorage.setItem('initialFilterRequest', true);
+  });
+  await page.reload();
+  await page.waitForSelector('.price', {timeout: 10000});
+
+  const mealsWrapper = await page.$$('.meal');
+  const menu = await Promise.all(mealsWrapper.map(async meal => createMeal(meal)));
+  await page.close()
+  await browser.close()
+  return menu;
 }
 
-function formatMeal(selector) {
-    const gericht = selector('.gerichtname').text();
-    let modifiedGericht = gericht.replace(/"/g, '\\"');
-    let preis = selector('.gerichtpreis').text();
-    let kategorie = selector('.kategorie').text().trim();
-    if (kategorie) {
-        kategorie = `\n\n_${kategorie}_\n`
-    }
+async function createMeal(meal){
+  let output = {};
+    const category = await meal.$('.categoryName');
+    const categoryName = await (await category.getProperty('innerText')).jsonValue();
+    output.category = categoryName;
 
-    if (preis) {
-        preis = `(_${preis}_)`
-    }
+    const mealNameWrapper = await meal.$('.mealNameWrapper');
+    const mealName = await (await mealNameWrapper.getProperty('innerText')).jsonValue();
+    output.name = mealName;
 
-    return `${kategorie}• \`${modifiedGericht}\` ${preis}`
+    const pricesWrapper = await meal.$$('.price');
+    const prices = await Promise.all(pricesWrapper.map(async price => {
+      return (await price.getProperty('innerText')).jsonValue();
+    }))
+    output.price = prices.join(' / ');
+    return output;
+}
+
+function formatMenu(meals) {
+  let formattedMeals = [];
+  for(const meal of meals){
+    if(!formattedMeals.some(item => item.category === meal.category)){
+      formattedMeals.push({category: meal.category, meals: []});
+    }
+    formattedMeals.find(item => item.category === meal.category).meals.push({name: meal.name, price: meal.price});
+  }
+
+  const menu = formattedMeals.map(item => {
+    const category = `\n\n_${item.category}_\n`;
+    const meals = item.meals.map( meal => `• \`${meal.name}\` (_${meal.price}_)`).join('\n');
+    return `${category} \n ${meals}`;
+  });
+
+  return menu.join('\n\n')
 }
 
 function fmt(str) {
@@ -85,7 +115,6 @@ function slackMenues(message) {
     console.log("create body message now with footer and body")
     const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
     const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
-    
     sendSlack(body);
 }
 
