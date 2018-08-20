@@ -1,10 +1,10 @@
 module.exports = {
     region: 'eu-central-1',
     handler: 'index.handler',
-    role: "arn:aws:iam::<awsAccountId>:role/MinimalLambdaRole",
+    role: "arn:aws:iam::272144222552:role/MinimalLambdaRole",
     functionName: "munchbot",
     timeout: 10,
-    memorySize: 128,
+    memorySize: 256,
     publish: true, // default: false,
-    runtime: 'nodejs6.10', // default: 'nodejs',
+    runtime: 'nodejs8.10' // default: 'nodejs',
 };

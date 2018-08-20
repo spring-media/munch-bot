@@ -4,19 +4,20 @@
   "description": "crawling pace and alerting slack",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "gulp build",
+    "deploy": "gulp deploy",
+    "runLocal": "gulp local-env-file; node lambdaLocal.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "del": "2.2.2",
-    "gulp": "3.9.1",
-    "gulp-env": "0.4.0",
-    "gulp-install": "0.6.0",
-    "gulp-replace": "0.5.4",
-    "gulp-zip": "3.2.0",
+    "gulp": "4.0",
+    "gulp-install": "1.1.0",
+    "gulp-zip": "4.2.0",
+    "gulp4-run-sequence": "0.0.3",
     "node-aws-lambda": "0.1.8",
-    "run-sequence": "1.2.2"
+    "gulp-env": "0.4.0"
   },
   "dependencies": {
     "cheerio": "0.22.0",
@@ -25,6 +26,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/WeltN24/munch-bot.git"
+    "url": "https://github.com/spring-media/munch-bot.git"
   }
 }

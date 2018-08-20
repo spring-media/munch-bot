@@ -1,3 +1,4 @@
 module.exports = {
-	slackIntegrationHookToken: '<slackToken>'
+	slackIntegrationHookToken: process.env.SLACK_TOKEN,
+    slackChannel: process.env.SLACK_CHANNEL || "@cgohlke"
 };

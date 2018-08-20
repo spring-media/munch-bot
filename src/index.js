@@ -113,13 +113,13 @@ function fmt(str) {
 
 function slackMenues(message) {
     console.log("create body message now with footer and body")
-    const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
-    const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
+    const footer = "Quelle: <https://pace.webspeiseplan.de/Menu>"
+    const body = `{"channel": "${config.slackChannel}", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
     sendSlack(body);
 }
 
 function sendSlack(body) {
-    console.log("send to slack now with message: " + body)
+    console.log("send to slack "+config.slackIntegrationHookToken+" now with message: " + body)
     nfetch(
         'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
         {method: 'POST', body: body}
