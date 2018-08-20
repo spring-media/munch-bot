@@ -7,21 +7,13 @@ const puppeteer = require('puppeteer');
 const util = require('util')
 
 const holidayMap = {};
-//31.03
-holidayMap["2018230"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Karfreitag!!!*\n\n"};
-//02.04.
-holidayMap["20180302"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Ostern!!!* :egg: \n\n"};
-//1.5.
-holidayMap["20180401"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit!!!*\n\n"};
-//10.5.
-holidayMap["20180410"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt!!!* :beers:\n\n"};
-//21.5.
-holidayMap["20180421"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Pfingsten!!!*\n\n"};
 //3.10.
 holidayMap["20180903"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der deutschen Einheit!!!*\n\n"};
 
 exports.handler = async function () {
-    console.log("start munch-bot")
+    
+    console.log(`start munch-bot with channel ${config.slackChannel}`)
+
     if (!isHoliday()) {
       const weekday = new Date().getDay();
       if (weekday < 1 || weekday > 5) {
@@ -33,6 +25,7 @@ exports.handler = async function () {
 
       slackMenues(formattedMenu);
     }
+    
     console.log("finish munch-bot")
 }
 
