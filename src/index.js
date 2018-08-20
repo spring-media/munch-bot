@@ -3,8 +3,6 @@
 const cheerio = require('cheerio');
 const nfetch = require('node-fetch');
 const config = require('./config');
-const puppeteer = require('puppeteer');
-const util = require('util')
 
 const holidayMap = {};
 //31.03
@@ -20,21 +18,37 @@ holidayMap["20180421"] = {"channel": "#general", "text": "_The Munch-Bot kindly 
 //3.10.
 holidayMap["20180903"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der deutschen Einheit!!!*\n\n"};
 
-exports.handler = async function () {
+const gerichtsKategorien = {
+  3: 'Essentia',
+  7: 'Tagesgericht',
+  27: 'Aktionstresen',
+  8: 'Vegetarisch',
+  33: 'Suppen und Eintöpfe',
+  5: 'Spezial'
+}
+
+exports.handler = function () {
     console.log("start munch-bot")
     if (!isHoliday()) {
-      const weekday = new Date().getDay();
-      if (weekday < 1 || weekday > 5) {
-          console.log('Today is no workday! I will enjoy the weekend!');
-          return;
-      }
-      const menu = await fetchMenu();
-      const formattedMenu = await formatMenu(menu);
-
-      slackMenues(formattedMenu);
+        const weekday = new Date().getDay();
+        if (weekday < 1 || weekday > 5) {
+            console.log('Today is no workday! I will enjoy the weekend!');
+            return;
+        }
+        console.log("fetch menu from pace")
+        const fetchOptions =
+        {
+          headers: {
+            Referer: 'https://pace.webspeiseplan.de/Menu',
+          }
+        }
+        nfetch(`https://pace.webspeiseplan.de/index.php?token=fc2ab5cbcc451ed9b0a290b5b558b059&model=menu&location=1&languagetype=1`, fetchOptions)
+            .then(res => res.json())
+            .then(json => slackMenues(extractMenueMessage(json)))
+            .catch(err => console.log(err, err.stack));
     }
     console.log("finish munch-bot")
-}
+};
 
 function isHoliday() {
     const today = new Date();
@@ -45,66 +59,49 @@ function isHoliday() {
         sendSlack(JSON.stringify(holidayMap[todayString]));
         return true;
     }
+
     return false;
 }
 
-async function fetchMenu() {
-  console.log("fetch menu from pace")
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  await page.goto('https://pace.webspeiseplan.de/Menu');
+function extractMenueMessage(json) {
+    console.log("extract menu and create slack json")
+    const today = new Date();
+    const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`;
 
-  await page.evaluate(() => {
-    localStorage.clear();
-    localStorage.setItem('location', 1);
-    localStorage.setItem('outlet', 4);
-    localStorage.setItem('inited', true);
-    localStorage.setItem('initialFilterRequest', true);
-  });
-  await page.reload();
-  await page.waitForSelector('.price', {timeout: 10000});
+    console.log("extract menu with day -> " + dayKey)
+    const gerichte = json.content[0].speiseplanGerichtData.filter(gerichtData => gerichtData.speiseplanAdvancedGericht.datum.startsWith(dayKey))
 
-  const mealsWrapper = await page.$$('.meal');
-  const menu = await Promise.all(mealsWrapper.map(async meal => createMeal(meal)));
-  await page.close()
-  await browser.close()
-  return menu;
+    const formattedMeals =  formatMeal(gerichte)
+
+    return formattedMeals.map(item => {
+      const kategorie = `\n\n_${gerichtsKategorien[item.kategorie]}_\n`
+      const meals = item.meals.map( meal => `• \`${meal.name}\` (_${meal.price}_)`).join('\n')
+      return `${kategorie} ${meals}`
+    }).join('\n')
 }
 
-async function createMeal(meal){
-  let output = {};
-    const category = await meal.$('.categoryName');
-    const categoryName = await (await category.getProperty('innerText')).jsonValue();
-    output.category = categoryName;
-
-    const mealNameWrapper = await meal.$('.mealNameWrapper');
-    const mealName = await (await mealNameWrapper.getProperty('innerText')).jsonValue();
-    output.name = mealName;
-
-    const pricesWrapper = await meal.$$('.price');
-    const prices = await Promise.all(pricesWrapper.map(async price => {
-      return (await price.getProperty('innerText')).jsonValue();
-    }))
-    output.price = prices.join(' / ');
-    return output;
-}
-
-function formatMenu(meals) {
-  let formattedMeals = [];
-  for(const meal of meals){
-    if(!formattedMeals.some(item => item.category === meal.category)){
-      formattedMeals.push({category: meal.category, meals: []});
+function formatMeal(gerichte) {
+  let formattedMeals = []
+  for(const gericht of gerichte){
+    const info = gericht.zusatzinformationen
+    let price;
+    if(info.mitarbeiterpreisDecimal2){
+      price = `Preis: ${info.mitarbeiterpreisDecimal2.toLocaleString()}€`
+      if(info.gaestepreisDecimal2){
+        price += ` / Menüpreis: ${info.gaestepreisDecimal2.toLocaleString()}€`
+      }
+    } else if(info.price3Decimal2 && info.price4Decimal2){
+      price = `klein: ${info.price3Decimal2.toLocaleString()}€ / groß: ${info.price4Decimal2.toLocaleString()}€`
     }
-    formattedMeals.find(item => item.category === meal.category).meals.push({name: meal.name, price: meal.price});
+
+    const kategorieID = gericht.speiseplanAdvancedGericht.gerichtkategorieID
+    if(!formattedMeals.some(meal => meal.kategorie === kategorieID)){
+      formattedMeals.push({kategorie: kategorieID, meals: []})
+    }
+    formattedMeals.find(meal => meal.kategorie === kategorieID).meals.push({name: gericht.speiseplanAdvancedGericht.gerichtname, price})
   }
 
-  const menu = formattedMeals.map(item => {
-    const category = `\n\n_${item.category}_\n`;
-    const meals = item.meals.map( meal => `• \`${meal.name}\` (_${meal.price}_)`).join('\n');
-    return `${category} \n ${meals}`;
-  });
-
-  return menu.join('\n\n')
+  return formattedMeals;
 }
 
 function fmt(str) {
@@ -113,13 +110,14 @@ function fmt(str) {
 
 function slackMenues(message) {
     console.log("create body message now with footer and body")
-    const footer = "Quelle: <https://pace.webspeiseplan.de/Menu>"
-    const body = `{"channel": "${config.slackChannel}", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
+    const footer = "Quelle: <http://pace.webspeiseplan.de/?standort=1&outlet=4|PACE>"
+    const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
+
     sendSlack(body);
 }
 
 function sendSlack(body) {
-    console.log("send to slack "+config.slackIntegrationHookToken+" now with message: " + body)
+    console.log("send to slack now with message: " + body)
     nfetch(
         'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
         {method: 'POST', body: body}
