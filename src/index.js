@@ -102,8 +102,8 @@ function fmt(str) {
 
 function slackMenues(message) {
     console.log("create body message now with footer and body")
-    const footer = "Quelle: <http://pace.webspeiseplan.de/Menu|PACE>"
-    const body = `{"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
+    const footer = "Quelle: <http://pace.webspeiseplan.de/Men|PACE>"
+    const body = `{"channel": "${config.slackChannel}", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
 
     sendSlack(body);
 }
