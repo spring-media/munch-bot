@@ -14,7 +14,8 @@ const gerichtsKategorien = {
   27: 'Aktionstresen',
   8: 'Vegetarisch',
   33: 'Suppen und Eintöpfe',
-  5: 'Spezial'
+  5: 'Spezial',
+  25: 'Dessert'
 }
 
 exports.handler = function () {
@@ -38,7 +39,7 @@ exports.handler = function () {
             .then(json => slackMenues(extractMenueMessage(json)))
             .catch(err => console.log(err, err.stack));
     }
-    
+
     console.log("finish munch-bot")
 };
 
@@ -57,6 +58,7 @@ function isHoliday() {
 
 function extractMenueMessage(json) {
     console.log("extract menu and create slack json")
+    console.log(JSON.stringify(json))
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`;
 
@@ -90,7 +92,9 @@ function formatMeal(gerichte) {
     if(!formattedMeals.some(meal => meal.kategorie === kategorieID)){
       formattedMeals.push({kategorie: kategorieID, meals: []})
     }
-    formattedMeals.find(meal => meal.kategorie === kategorieID).meals.push({name: gericht.speiseplanAdvancedGericht.gerichtname, price})
+    formattedMeals
+      .find(meal => meal.kategorie === kategorieID)
+      .meals.push({name: gericht.speiseplanAdvancedGericht.gerichtname, price})
   }
 
   return formattedMeals;
