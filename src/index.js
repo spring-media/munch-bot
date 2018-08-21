@@ -58,7 +58,6 @@ function isHoliday() {
 
 function extractMenueMessage(json) {
     console.log("extract menu and create slack json")
-    console.log(JSON.stringify(json))
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`;
 
@@ -80,12 +79,12 @@ function formatMeal(gerichte) {
     const info = gericht.zusatzinformationen
     let price;
     if(info.mitarbeiterpreisDecimal2){
-      price = `Preis: ${info.mitarbeiterpreisDecimal2.toLocaleString()}€`
+      price = `Preis: ${info.mitarbeiterpreisDecimal2.toLocaleString('de-DE')}€`
       if(info.gaestepreisDecimal2){
-        price += ` / Menüpreis: ${info.gaestepreisDecimal2.toLocaleString()}€`
+        price += ` / Menüpreis: ${info.gaestepreisDecimal2.toLocaleString('de-DE')}€`
       }
     } else if(info.price3Decimal2 && info.price4Decimal2){
-      price = `klein: ${info.price3Decimal2.toLocaleString()}€ / groß: ${info.price4Decimal2.toLocaleString()}€`
+      price = `klein: ${info.price3Decimal2.toLocaleString('de-DE')}€ / groß: ${info.price4Decimal2.toLocaleString('de-DE')}€`
     }
 
     const kategorieID = gericht.speiseplanAdvancedGericht.gerichtkategorieID
