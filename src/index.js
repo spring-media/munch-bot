@@ -1,6 +1,5 @@
 'use strict';
 
-const cheerio = require('cheerio');
 const nfetch = require('node-fetch');
 const config = require('./config');
 
@@ -68,9 +67,24 @@ function extractMenueMessage(json) {
 
     return formattedMeals.map(item => {
       const kategorie = `\n\n_${gerichtsKategorien[item.kategorie]}_\n`
-      const meals = item.meals.map( meal => `• \`${meal.name}\` (_${meal.price}_)`).join('\n')
+      const meals = item.meals.map( meal => `• \`${meal.name}\` _${meal.price}_`).join('\n')
       return `${kategorie} ${meals}`
     }).join('\n')
+}
+
+function calculate350(price) {
+  let result;
+  var floatPrice = parseFloat(price);
+  if (floatPrice * 0.55 <= 3.50) {
+    result = floatPrice * 0.45
+  } else {
+    result = floatPrice - 3.50
+  }
+  return parseFloat(result).toFixed(2)
+}
+
+function printPrice(price) {
+  return`${price}€ ` + "(*"+calculate350(price)+"€*)"
 }
 
 function formatMeal(gerichte) {
@@ -79,12 +93,12 @@ function formatMeal(gerichte) {
     const info = gericht.zusatzinformationen
     let price;
     if(info.mitarbeiterpreisDecimal2){
-      price = `Preis: ${info.mitarbeiterpreisDecimal2.toLocaleString('de-DE')}€`
+      price = printPrice(info.mitarbeiterpreisDecimal2)
       if(info.gaestepreisDecimal2){
-        price += ` / Menüpreis: ${info.gaestepreisDecimal2.toLocaleString('de-DE')}€`
+        price += ` / Menü: `+printPrice(info.gaestepreisDecimal2)
       }
     } else if(info.price3Decimal2 && info.price4Decimal2){
-      price = `klein: ${info.price3Decimal2.toLocaleString('de-DE')}€ / groß: ${info.price4Decimal2.toLocaleString('de-DE')}€`
+      price = `klein: `+printPrice(info.price3Decimal2)+` / groß: `+printPrice(info.price4Decimal2)
     }
 
     const kategorieID = gericht.speiseplanAdvancedGericht.gerichtkategorieID
@@ -105,9 +119,10 @@ function fmt(str) {
 
 function slackMenues(message) {
     console.log("create body message now with footer and body")
-    const footer = "Quelle: <http://pace.webspeiseplan.de/Men|PACE>"
+    const footer = "\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>"
     const body = `{"channel": "${config.slackChannel}", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
-
+    
+    console.log("send to slack now with message: " + body)
     sendSlack(body);
 }
 

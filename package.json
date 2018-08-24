@@ -20,7 +20,6 @@
     "node-aws-lambda": "0.1.8"
   },
   "dependencies": {
-    "cheerio": "0.22.0",
     "node-fetch": "2.1.2"
   },
   "repository": {
