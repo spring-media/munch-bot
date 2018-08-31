@@ -61,8 +61,10 @@ function extractMenueMessage(json) {
     const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`;
 
     console.log("extract menu with day -> " + dayKey)
-    const gerichte = json.content[0].speiseplanGerichtData.filter(gerichtData => gerichtData.speiseplanAdvancedGericht.datum.startsWith(dayKey))
-
+    const gerichte = json.content
+                      .map(item => item.speiseplanGerichtData
+                                    .filter(gerichtData => gerichtData.speiseplanAdvancedGericht.datum.startsWith(dayKey)))
+                      .filter(array => array.length !== 0)
     const formattedMeals =  formatMeal(gerichte)
 
     return formattedMeals.map(item => {
@@ -89,7 +91,7 @@ function printPrice(price) {
 
 function formatMeal(gerichte) {
   let formattedMeals = []
-  for(const gericht of gerichte){
+  for(const gericht of gerichte[0]){
     const info = gericht.zusatzinformationen
     let price;
     if(info.mitarbeiterpreisDecimal2){
@@ -121,7 +123,7 @@ function slackMenues(message) {
     console.log("create body message now with footer and body")
     const footer = "\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>"
     const body = `{"channel": "${config.slackChannel}", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
-    
+
     console.log("send to slack now with message: " + body)
     sendSlack(body);
 }
