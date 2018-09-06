@@ -69,7 +69,7 @@ function extractMenueMessage(json) {
 
     return formattedMeals.map(item => {
       const kategorie = `\n\n_${gerichtsKategorien[item.kategorie]}_\n`
-      const meals = item.meals.map( meal => `• \`${meal.name}\` _${meal.price}_`).join('\n')
+      const meals = item.meals.map( meal => `• \`<http://pace.webspeiseplan.de/Meal/${meal.id}|${meal.name}|>\` _${meal.price}_`).join('\n')
       return `${kategorie} ${meals}`
     }).join('\n')
 }
@@ -109,7 +109,7 @@ function formatMeal(gerichte) {
     }
     formattedMeals
       .find(meal => meal.kategorie === kategorieID)
-      .meals.push({name: gericht.speiseplanAdvancedGericht.gerichtname, price})
+      .meals.push({name: gericht.speiseplanAdvancedGericht.gerichtname, id: gericht.speiseplanAdvancedGericht.id, price})
   }
 
   return formattedMeals;
