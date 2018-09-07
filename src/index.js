@@ -69,7 +69,7 @@ function extractMenueMessage(json) {
 
     return formattedMeals.map(item => {
       const kategorie = `\n\n_${gerichtsKategorien[item.kategorie]}_\n`
-      const meals = item.meals.map( meal => `• \`<http://pace.webspeiseplan.de/Meal/${meal.id}|${meal.name}|>\` _${meal.price}_`).join('\n')
+      const meals = item.meals.map( meal => `• \`<http://pace.webspeiseplan.de/Meal/${meal.id}|${meal.name}>\` _${meal.price}_`).join('\n')
       return `${kategorie} ${meals}`
     }).join('\n')
 }
