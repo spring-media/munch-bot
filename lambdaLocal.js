@@ -7,7 +7,7 @@ const envs = env({
 
 const index = require('./src/index');
 
-console.log("start local munchbot with Parameter => (channel: "+process.env.SLACK_CHANNEL + ", token: " + process.env.SLACK_TOKEN);
+console.log("start local munchbot with Parameter => (channel: "+process.env.SLACK_CHANNEL + ", token: " + process.env.SLACK_TOKEN + ")" );
 
 index.handler({}, {}, (result,error)=>{
     console.log('Result:', result);

@@ -109,10 +109,14 @@ function formatMeal(gerichte) {
     }
     formattedMeals
       .find(meal => meal.kategorie === kategorieID)
-      .meals.push({name: gericht.speiseplanAdvancedGericht.gerichtname, id: gericht.speiseplanAdvancedGericht.id, price})
+      .meals.push({name: fixDoubleQuotes(gericht.speiseplanAdvancedGericht.gerichtname), id: gericht.speiseplanAdvancedGericht.id, price})
   }
 
   return formattedMeals;
+}
+
+function fixDoubleQuotes(gericht) {
+  return gericht.replace(/"/g, '\\"');
 }
 
 function fmt(str) {
