@@ -109,7 +109,7 @@ function formatMeal(gerichte) {
     }
     formattedMeals
       .find(meal => meal.kategorie === kategorieID)
-      .meals.push({name: fixDoubleQuotes(gericht.speiseplanAdvancedGericht.gerichtname), id: gericht.speiseplanAdvancedGericht.id, price})
+      .meals.push({name: removeLinebreak(fixDoubleQuotes(gericht.speiseplanAdvancedGericht.gerichtname)), id: gericht.speiseplanAdvancedGericht.id, price})
   }
 
   return formattedMeals;
@@ -117,6 +117,10 @@ function formatMeal(gerichte) {
 
 function fixDoubleQuotes(gericht) {
   return gericht.replace(/"/g, '\\"');
+}
+
+function removeLinebreak(gericht) {
+  return gericht.replace(/\r?\n|\r/g, ' ')
 }
 
 function fmt(str) {
