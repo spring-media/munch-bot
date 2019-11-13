@@ -7,7 +7,7 @@ module "lambda" {
   stage = "${terraform.workspace}"
   splunk_api_token = "token"
   slack_token = "${module.config.slack_token}"
-  slack_channel = "${terraform.workspace == "prod" ? "#general" : "@cgohlke"}"
+  slack_channel = "${terraform.workspace == "prod" ? "#essen_berlin" : "@cgohlke"}"
 }
 
 module "trigger" {

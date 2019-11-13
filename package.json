@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "del": "2.2.2",
-    "gulp": "4.0",
+    "gulp": "4.0.2",
     "gulp-env": "0.4.0",
     "gulp-install": "1.1.0",
     "gulp-zip": "4.2.0",
@@ -20,7 +20,7 @@
     "node-aws-lambda": "0.1.8"
   },
   "dependencies": {
-    "node-fetch": "2.1.2"
+    "node-fetch": "2.6.0"
   },
   "repository": {
     "type": "git",

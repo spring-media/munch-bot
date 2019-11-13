@@ -128,12 +128,15 @@ function fmt(str) {
 }
 
 function slackMenues(message) {
+    const today = new Date();
+    const todayString = today.getDate() + "." + (today.getMonth()+1) + "." + today.getFullYear();
     console.log("create body message now with footer and body")
-    const footer = "\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>"
-    const body = `{"channel": "${config.slackChannel}", "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute:*\n\n${message}\n${footer}"}`;
+    const footer = "\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here*"
+    const headerChannel = `_The Munch-Bot kindly presents:_ *Das Menü von heute (${todayString})*`;
+    const bodyChannel = `{"channel": "${config.slackChannel}", "text": "${headerChannel}\n\n${message}\n${footer}"}`;
 
-    console.log("send to slack now with message: " + body)
-    sendSlack(body);
+    console.log("send to slack now with message: " + bodyChannel)
+    sendSlack(bodyChannel);
 }
 
 function sendSlack(body) {
