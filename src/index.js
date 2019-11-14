@@ -8,13 +8,20 @@ const holidayMap = {};
 holidayMap["20180903"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der deutschen Einheit!!!*\n\n"};
 
 const gerichtsKategorien = {
-  3: 'Essentia',
-  7: 'Tagesgericht',
-  27: 'Aktionstresen',
-  8: 'Vegetarisch',
-  33: 'Suppen und Eintöpfe',
-  5: 'Spezial',
-  25: 'Dessert'
+  43: 'Essentia',
+  44: 'Essentia Menü',
+  45: 'Essentia Vorspeise',
+  46: 'Tagesgericht I',
+  47: 'Tagesgericht II',
+  48: 'Aktion',
+  49: 'Vegetarisch',
+  50: 'Spezial I',
+  53: 'Suppe klein',
+  54: 'Suppe groß',
+  55: 'Eintopf klein',
+  57: 'Eintopf groß',
+  58: 'Dessert klein',
+  56: 'Dessert groß'
 }
 
 exports.handler = function () {
@@ -91,7 +98,8 @@ function printPrice(price) {
 
 function formatMeal(gerichte) {
   let formattedMeals = []
-  for(const gericht of gerichte[0]){
+  console.log(gerichte[1])
+  for(const gericht of gerichte[1]){
     const info = gericht.zusatzinformationen
     let price;
     if(info.mitarbeiterpreisDecimal2){
