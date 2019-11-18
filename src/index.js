@@ -69,6 +69,7 @@ function extractMenueMessage(json) {
 
     console.log("extract menu with day -> " + dayKey)
     const gerichte = json.content
+                      .filter(item => item.speiseplanAdvanced.outletID === 4)
                       .map(item => item.speiseplanGerichtData
                                     .filter(gerichtData => gerichtData.speiseplanAdvancedGericht.datum.startsWith(dayKey)))
                       .filter(array => array.length !== 0)
@@ -98,8 +99,7 @@ function printPrice(price) {
 
 function formatMeal(gerichte) {
   let formattedMeals = []
-  console.log(gerichte[1])
-  for(const gericht of gerichte[1]){
+  for(const gericht of gerichte[0]){
     const info = gericht.zusatzinformationen
     let price;
     if(info.mitarbeiterpreisDecimal2){
