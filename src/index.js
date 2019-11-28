@@ -21,7 +21,8 @@ const gerichtsKategorien = {
   55: 'Eintopf klein',
   57: 'Eintopf groß',
   58: 'Dessert klein',
-  56: 'Dessert groß'
+  56: 'Dessert groß',
+  121: 'Essentia Beilage'
 }
 
 exports.handler = function () {
