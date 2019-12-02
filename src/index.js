@@ -129,8 +129,9 @@ function fixDoubleQuotes(gericht) {
 }
 
 function removeLinebreak(gericht) {
-  return gericht.replace(/\r?\n|\r/g, ' ')
+  return gericht.replace(/ ?\r?\n ?|\r/gm, ' ')
 }
+
 
 function fmt(str) {
     return ('0' + str).slice(-2);
