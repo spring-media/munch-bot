@@ -16,6 +16,7 @@ const gerichtsKategorien = {
   48: 'Aktion',
   49: 'Vegetarisch',
   50: 'Spezial I',
+  51: 'Spezial II',
   53: 'Suppe klein',
   54: 'Suppe groß',
   55: 'Eintopf klein',
