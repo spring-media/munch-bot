@@ -102,7 +102,9 @@ function printPrice(price) {
 function formatMeal(gerichte) {
   let formattedMeals = []
   for(const gericht of gerichte[0]){
+    if(!gericht) continue
     const info = gericht.zusatzinformationen
+    if(!info) continue
     let price;
     if(info.mitarbeiterpreisDecimal2){
       price = printPrice(info.mitarbeiterpreisDecimal2)
