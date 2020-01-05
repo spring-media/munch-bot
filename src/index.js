@@ -27,6 +27,17 @@ const gerichtsKategorien = {
   121: 'Essentia Beilage'
 }
 
+const aggregateCategories = [
+  {id: 1, name: 'Essentia', kategorie: [43, 44, 45,121]},
+  {id: 2, name: 'Tagesgericht', kategorie: [46,47]},
+  {id: 3, name: 'Aktion', kategorie: [48]},
+  {id: 4, name: 'Vegetarisch', kategorie: [49]},
+  {id: 5, name: 'Spezial', kategorie: [50,51,52]},
+  {id: 6, name: 'Suppe/Einopf', kategorie: [53,54,55,57]},
+  {id: 7, name: 'Dessert', kategorie: [58,56]}
+]
+const unknownCategory = {id: 1000, name: 'Unbekannt', kategorie: []}
+
 exports.handler = function () {
     console.log(`start munch-bot with channel ${config.slackChannel}`)
 
@@ -36,6 +47,7 @@ exports.handler = function () {
             console.log('Today is no workday! I will enjoy the weekend!');
             return;
         }
+
         console.log("fetch menu from pace")
         const fetchOptions =
         {
@@ -76,13 +88,62 @@ function extractMenueMessage(json) {
                       .map(item => item.speiseplanGerichtData
                                     .filter(gerichtData => gerichtData.speiseplanAdvancedGericht.datum.startsWith(dayKey)))
                       .filter(array => array.length !== 0)
-    const formattedMeals =  formatMeal(gerichte)
+    const foundMeals = extractCategoriesWithMeals(gerichte)
 
-    return formattedMeals.map(item => {
-      const kategorie = `\n\n_${gerichtsKategorien[item.kategorie]}_\n`
-      const meals = item.meals.map( meal => `• \`<http://pace.webspeiseplan.de/Meal/${meal.id}|${meal.name}>\` _${meal.price}_`).join('\n')
-      return `${kategorie} ${meals}`
+    return foundMeals.map(category => {
+      const kategorie = `\n\n_${category.name}_\n`
+      const meals = category.meals.map( meal => ` • \`<http://pace.webspeiseplan.de/Meal/${meal.id}|${meal.name}>\` _${meal.price}_`).join('\n')
+      return `${kategorie}${meals}`
     }).join('\n')
+}
+
+function extractCategoriesWithMeals(gerichte) {
+  let formattedMeals = []
+  for(const gericht of gerichte[0]){
+    if(!gericht) continue
+
+    const price = getPrice(gericht.zusatzinformationen)
+    if(!price) continue
+
+    const kategorieID = gericht.speiseplanAdvancedGericht.gerichtkategorieID
+    let aggregateCategory = aggregateCategories.
+      find(aggregateCategory => aggregateCategory.kategorie.
+        find(id => id === kategorieID)
+      )
+
+    if (!aggregateCategory) {
+        console.log("categoryId not found: " + kategorieID)
+        aggregateCategory = unknownCategory
+    }
+
+    if(!formattedMeals.some(category => category.kategorieId === aggregateCategory.id)){
+      formattedMeals.push({kategorieId: aggregateCategory.id, name: aggregateCategory.name, meals: []})
+    }
+
+    formattedMeals
+      .find(category => category.kategorieId === aggregateCategory.id)
+      .meals.push({name: removeLinebreak(fixDoubleQuotes(gericht.speiseplanAdvancedGericht.gerichtname)), id: gericht.speiseplanAdvancedGericht.id, price})
+  }
+
+  return formattedMeals;
+}
+
+function getPrice(info) {
+    if(!info) { 
+      return
+    }
+
+    let price;
+    if(info.mitarbeiterpreisDecimal2){
+      price = printPrice(info.mitarbeiterpreisDecimal2)
+      if(info.gaestepreisDecimal2){ //maybe not needed anymore
+        price += ` / Menü: `+printPrice(info.gaestepreisDecimal2)
+      }
+    } else if(info.price3Decimal2 && info.price4Decimal2){ //maybe not needed anymore
+      price = `klein: `+printPrice(info.price3Decimal2)+` / groß: `+printPrice(info.price4Decimal2)
+    }
+
+    return price
 }
 
 function calculate350(price) {
@@ -98,34 +159,6 @@ function calculate350(price) {
 
 function printPrice(price) {
   return`${price}€ ` + "(*"+calculate350(price)+"€*)"
-}
-
-function formatMeal(gerichte) {
-  let formattedMeals = []
-  for(const gericht of gerichte[0]){
-    if(!gericht) continue
-    const info = gericht.zusatzinformationen
-    if(!info) continue
-    let price;
-    if(info.mitarbeiterpreisDecimal2){
-      price = printPrice(info.mitarbeiterpreisDecimal2)
-      if(info.gaestepreisDecimal2){
-        price += ` / Menü: `+printPrice(info.gaestepreisDecimal2)
-      }
-    } else if(info.price3Decimal2 && info.price4Decimal2){
-      price = `klein: `+printPrice(info.price3Decimal2)+` / groß: `+printPrice(info.price4Decimal2)
-    }
-
-    const kategorieID = gericht.speiseplanAdvancedGericht.gerichtkategorieID
-    if(!formattedMeals.some(meal => meal.kategorie === kategorieID)){
-      formattedMeals.push({kategorie: kategorieID, meals: []})
-    }
-    formattedMeals
-      .find(meal => meal.kategorie === kategorieID)
-      .meals.push({name: removeLinebreak(fixDoubleQuotes(gericht.speiseplanAdvancedGericht.gerichtname)), id: gericht.speiseplanAdvancedGericht.id, price})
-  }
-
-  return formattedMeals;
 }
 
 function fixDoubleQuotes(gericht) {
@@ -145,7 +178,7 @@ function slackMenues(message) {
     const today = new Date();
     const todayString = today.getDate() + "." + (today.getMonth()+1) + "." + today.getFullYear();
     console.log("create body message now with footer and body")
-    const footer = "\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here*"
+    const footer = "\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here.*"
     const headerChannel = `_The Munch-Bot kindly presents:_ *Das Menü von heute (${todayString})*`;
     const bodyChannel = `{"channel": "${config.slackChannel}", "text": "${headerChannel}\n\n${message}\n${footer}"}`;
 
