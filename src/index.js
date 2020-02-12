@@ -33,7 +33,7 @@ const aggregateCategories = [
   {id: 3, name: 'Aktion', kategorie: [48]},
   {id: 4, name: 'Vegetarisch', kategorie: [49]},
   {id: 5, name: 'Spezial', kategorie: [50,51,52]},
-  {id: 6, name: 'Suppe/Einopf', kategorie: [53,54,55,57]},
+  {id: 6, name: 'Suppe/Eintopf', kategorie: [53,54,55,57]},
   {id: 7, name: 'Dessert', kategorie: [58,56]}
 ]
 const unknownCategory = {id: 1000, name: 'Unbekannt', kategorie: []}
