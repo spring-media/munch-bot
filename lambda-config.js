@@ -6,5 +6,5 @@ module.exports = {
     timeout: 10,
     memorySize: 256,
     publish: true, // default: false,
-    runtime: 'nodejs8.10' // default: 'nodejs',
+    runtime: 'nodejs12.x' // default: 'nodejs',
 };
