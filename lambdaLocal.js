@@ -13,4 +13,3 @@ index.handler({}, {}, (result,error)=>{
     console.log('Result:', result);
     console.log('Error:', error);
 });
-

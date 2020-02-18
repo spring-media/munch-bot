@@ -5,6 +5,7 @@ const runSequence = require('gulp4-run-sequence');
 const install = require('gulp-install');
 const awsLambda = require("node-aws-lambda");
 const fs = require('fs');
+const env = require('gulp-env');
 
 
 gulp.task('clean', function () {
@@ -23,6 +24,18 @@ gulp.task('node-mods', function () {
     return gulp.src('./package.json')
         .pipe(gulp.dest('dist/'))
         .pipe(install({production: true}));
+});
+
+gulp.task('local-env-file', function () {
+    const envFile = process.env['HOME'] + "/.spring/ep-local-env.json";
+    try {
+        fs.accessSync(envFile, fs.R_OK | fs.W_OK);
+        env({file: envFile})
+        return;
+    } catch (e) {
+        console.log("Note: Local development ENV file not exists: ", envFile);
+        return;
+    }
 });
 
 gulp.task('zip', function () {

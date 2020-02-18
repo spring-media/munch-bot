@@ -4,8 +4,13 @@ const nfetch = require('node-fetch');
 const config = require('./config');
 
 const holidayMap = {};
-//3.10.
-holidayMap["20180903"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der deutschen Einheit!!!*\n\n"};
+
+holidayMap["20200310"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Karfreitag*\n\n"};
+holidayMap["20200313"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Ostermontag*\n\n"};
+holidayMap["20200401"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit*\n\n"};
+holidayMap["20200421"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt*\n\n"};
+holidayMap["20200501"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Pfingsmontag*\n\n"};
+holidayMap["20201125"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten*\n\n"};
 
 const gerichtsKategorien = {
   43: 'Essentia',
@@ -88,6 +93,13 @@ function extractMenueMessage(json) {
                       .map(item => item.speiseplanGerichtData
                                     .filter(gerichtData => gerichtData.speiseplanAdvancedGericht.datum.startsWith(dayKey)))
                       .filter(array => array.length !== 0)
+    
+    if (!gerichte || gerichte.length === 0) {
+      console.log("no meals are found for today: " + JSON.stringify(json))
+      slackMessage(`Unfortunately PACE does not provide food information today :hankey:`)
+      throw new Error("No meals found for " + dayKey);
+    }
+
     const foundMeals = extractCategoriesWithMeals(gerichte)
 
     return foundMeals.map(category => {
@@ -172,6 +184,14 @@ function removeLinebreak(gericht) {
 
 function fmt(str) {
     return ('0' + str).slice(-2);
+}
+
+function slackMessage(message) {
+  const today = new Date();
+  const todayString = today.getDate() + "." + (today.getMonth()+1) + "." + today.getFullYear();
+  const headerChannel = `_The Munch-Bot kindly presents (${todayString}):_`;
+  const bodyChannel = `{"channel": "${config.slackChannel}", "text": "${headerChannel}\n\n${message}"}`;
+  sendSlack(bodyChannel);
 }
 
 function slackMenues(message) {
