@@ -5,12 +5,12 @@ const config = require('./config');
 
 const holidayMap = {};
 
-holidayMap["20200310"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Karfreitag*\n\n"};
-holidayMap["20200313"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Ostermontag*\n\n"};
-holidayMap["20200401"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit*\n\n"};
-holidayMap["20200421"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt*\n\n"};
-holidayMap["20200501"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Pfingsmontag*\n\n"};
-holidayMap["20201125"] = {"channel": "#general", "text": "_The Munch-Bot kindly presents:_ *Weihnachten*\n\n"};
+holidayMap["2020118"] = {"channel": `${config.slackChannel}`, "text": "_The Munch-Bot kindly presents:_ *Karfreitag*\n\n"};
+holidayMap["2020313"] = {"channel": `${config.slackChannel}`, "text": "_The Munch-Bot kindly presents:_ *Ostermontag*\n\n"};
+holidayMap["2020401"] = {"channel": `${config.slackChannel}`, "text": "_The Munch-Bot kindly presents:_ *Tag der Arbeit*\n\n"};
+holidayMap["2020421"] = {"channel": `${config.slackChannel}`, "text": "_The Munch-Bot kindly presents:_ *Himmelfahrt*\n\n"};
+holidayMap["2020501"] = {"channel": `${config.slackChannel}`, "text": "_The Munch-Bot kindly presents:_ *Pfingsmontag*\n\n"};
+holidayMap["20201125"] = {"channel": `${config.slackChannel}`, "text": "_The Munch-Bot kindly presents:_ *Weihnachten*\n\n"};
 
 const gerichtsKategorien = {
   43: 'Essentia',
@@ -72,7 +72,6 @@ exports.handler = function () {
 function isHoliday() {
     const today = new Date();
     const todayString = today.getFullYear() + "" + today.getMonth() + "" + today.getDate();
-
     if (todayString in holidayMap) {
         console.log("found holiday ");
         sendSlack(JSON.stringify(holidayMap[todayString]));
