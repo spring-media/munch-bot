@@ -15,6 +15,7 @@ Object {
   "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute (13.8.2021)*
 
 
+*------Papa-----*
 
 _Essentia_
  • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Spaghetti | Karotten-Pesto | Blattpetersilie>\` _6.90€ (*3.40€*)_
@@ -44,6 +45,31 @@ _Dessert_
 
 _Suppe/Eintopf_
  • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Kartoffelsuppe | Wurstscheiben>\` _3.90€ (*1.75€*)_
+
+
+*------Canteen-----*
+
+_Counter_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Schwarzer Quinoa | Süßkartoffel | Feldsalat>\` _8.30€ (*4.80€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Roastbeef | Frankfurter Grüne Sauce | Röstkartoffel>\` _9.20€ (*5.70€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Petersilienwurzel | Schwarzbrot | Thymian>\` _3.80€ (*1.71€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Cajun Spiced Lachs | Gemüse-Couscous | Limone | Ingwer>\` _8.50€ (*5.00€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Gefüllte Kürbis-Gnocchi | Baby Leaf | Tomate>\` _8.00€ (*4.50€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Indisches Dal | Granatapfel | Koriander>\` _7.00€ (*3.50€*)_
+
+
+_Dessert_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Gelbe Grütze | Vanillesauce>\` _1.90€ (*0.85€*)_
+
+
+_Salat_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Blattsalat | Balsamico | Croûtons>\` _6.00€ (*2.70€*)_
+
+
+_ABEND_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Roastbeef | Frankfurter Grüne Sauce | Röstkartoffel>\` _9.20€ (*5.70€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Indisches Dal | Granatapfel | Koriander>\` _7.00€ (*3.50€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Currywurst | Fritten>\` _6.50€ (*3.00€*)_
 
 _Preisangabe_: In Klammern mit Zuschuss von 3.50€
 _Source_: <https://pace.berlin/|PACE>
