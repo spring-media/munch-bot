@@ -86,7 +86,7 @@ function extractMenueMessage (json, outletName) {
 
   return foundMeals.map(category => {
     const kategorie = `\n\n_${category.name}_\n`
-    const meals = category.meals.map(meal => ` • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|${meal.name}>\` _${meal.price}_`).join('\n')
+    const meals = category.meals.map(meal => ` • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=${meal.outlet}|${meal.name}>\` _${meal.price}_`).join('\n')
     return `${kategorie}${meals}`
   }).join('\n')
 }
