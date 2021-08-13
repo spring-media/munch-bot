@@ -3,7 +3,7 @@ const nfetch = require('node-fetch')
 const fs = require('fs')
 
 // const log = console.log
-// console.log = () => {}
+console.log = () => {}
 
 describe('index', () => {
   it('should print the menu', async () => {

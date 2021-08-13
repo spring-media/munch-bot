@@ -18,8 +18,11 @@ const aggregateCategories = [
   { id: 3, name: 'Aktion', kategorie: /aktion/i },
   { id: 4, name: 'Vegetarisch', kategorie: /vegetarisch/i },
   { id: 5, name: 'Spezial', kategorie: /spezial/i },
-  { id: 6, name: 'Suppe/Eintopf', kategorie: /suppe|eintopf/i },
-  { id: 7, name: 'Dessert', kategorie: /dessert/i },
+  { id: 6, name: 'Counter', kategorie: /counter/i },
+  { id: 7, name: 'Suppe/Eintopf', kategorie: /suppe|eintopf/i },
+  { id: 8, name: 'Salat', kategorie: /salat/i },
+  { id: 9, name: 'Dessert', kategorie: /dessert/i },
+  { id: 10, name: 'ABEND', kategorie: /abend/i },
   { id: 1000, name: 'Unbekannt', kategorie: /./ }
 ]
 
@@ -44,7 +47,7 @@ exports.handler = async () => {
         }
     return nfetch(`https://api.pace.berlin/api/foodfinder/list/de/all/1?_=${new Date().getTime()}`, fetchOptions)
       .then(res => res.json())
-      .then(json => slackMenues(extractMenueMessage(json)))
+      .then(json => slackMenues(extractMenueMessage(json, 'papa'), extractMenueMessage(json, 'canteen')))
       .catch(err => console.log(err, err.stack))
   }
 }
@@ -61,15 +64,16 @@ function isHoliday () {
   return false
 }
 
-function extractMenueMessage (json) {
+function extractMenueMessage (json, outletName) {
   console.log('extract menu and create slack json')
   const today = new Date()
   const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`
 
   console.log('extract menu with day -> ' + dayKey)
   const gerichte = json.data.filter(({ outlet, date, mealtime }) =>
-    outlet === 'papa' &&
-    date === dayKey
+    outlet === outletName &&
+    date === dayKey &&
+    mealtime === 'Mittagessen'
   )
 
   if (!gerichte || gerichte.length === 0) {
@@ -78,7 +82,7 @@ function extractMenueMessage (json) {
     throw new Error('No meals found for ' + dayKey)
   }
 
-  const foundMeals = extractCategoriesWithMeals(gerichte)
+  const foundMeals = extractCategoriesWithMeals(gerichte.filter(({ outlet }) => outlet === outletName))
 
   return foundMeals.map(category => {
     const kategorie = `\n\n_${category.name}_\n`
@@ -165,13 +169,13 @@ function slackMessage (message) {
   sendSlack(bodyChannel)
 }
 
-function slackMenues (message) {
+function slackMenues (messagePapa, messageCanteen) {
   const today = new Date()
   const todayString = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear()
   console.log('create body message now with footer and body')
   const footer = '\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Source_: <https://pace.berlin/|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here.*'
   const headerChannel = `_The Munch-Bot kindly presents:_ *Das Menü von heute (${todayString})*`
-  const bodyChannel = JSON.stringify({ channel: config.slackChannel, text: `${headerChannel}\n\n${message}\n${footer}` })
+  const bodyChannel = JSON.stringify({ channel: config.slackChannel, text: `${headerChannel}\n\n\n*------Papa-----*${messagePapa}\n\n\n*------Canteen-----*${messageCanteen}\n${footer}` })
 
   console.log('send to slack now with message: ' + bodyChannel)
   sendSlack(bodyChannel)
