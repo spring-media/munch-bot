@@ -6,6 +6,7 @@
   "scripts": {
     "build": "gulp build",
     "deploy": "gulp deploy",
+    "test": "jest",
     "runLocal": "node lambdaLocal.js"
   },
   "author": "",
@@ -17,6 +18,7 @@
     "gulp-install": "1.1.0",
     "gulp-zip": "4.2.0",
     "gulp4-run-sequence": "0.0.3",
+    "jest": "^27.0.6",
     "node-aws-lambda": "0.1.8"
   },
   "dependencies": {
@@ -27,6 +29,6 @@
     "url": "https://github.com/spring-media/munch-bot.git"
   },
   "engines": {
-      "node": ">=12.0.0"
+    "node": ">=12.0.0"
   }
 }
