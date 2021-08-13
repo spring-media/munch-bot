@@ -41,7 +41,7 @@ node('slave-node8') {
                         sh "mkdir -p ~/.ssh/"
                         sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
 
-                        sh 'yarn install; yarn run build'
+                        sh 'yarn install; yarn run test; yarn run build'
                         
                     }
                 }
