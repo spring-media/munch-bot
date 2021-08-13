@@ -12,37 +12,41 @@ Array [
 exports[`index should print the menu 2`] = `
 Object {
   "channel": "channelID",
-  "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute (15.11.2019)*
+  "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute (13.8.2021)*
 
 
 
 _Essentia_
- • \`<http://pace.webspeiseplan.de/Meal/123982|Penne mit gebratenen Artischocken, Pilzen und Parmesan>\` _6.95€ (*3.45€*)_
- • \`<http://pace.webspeiseplan.de/Meal/123983|Beerenstrudel mit Soja-Vanille-Milch, Penne mit gebratenen Artischocken, Pilzen und Parmesan>\` _7.45€ (*3.95€*)_
- • \`<http://pace.webspeiseplan.de/Meal/123984|Beerenstrudel mit Soja-Vanille-Milch>\` _1.45€ (*0.65€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Spaghetti | Karotten-Pesto | Blattpetersilie>\` _6.90€ (*3.40€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Spaghetti Carbonara>\` _7.30€ (*3.80€*)_
 
 
 _Tagesgericht_
- • \`<http://pace.webspeiseplan.de/Meal/123985|Gebratenes Lachsfilet mit Zucchiniragoût und Wildreis>\` _7.95€ (*4.45€*)_
- • \`<http://pace.webspeiseplan.de/Meal/123986|Gulasch vom Hähnchen und der Pute Leipziger Allerlei und Salzkartoffeln>\` _6.45€ (*2.95€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Gebratenes Seelachsfilet | Kartoffelwürfel | Balsamico-Linsengemüse>\` _7.65€ (*4.15€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Vegane Kartoffelspalten | Ofengemüse | Curry-Dip>\` _7.10€ (*3.60€*)_
 
 
 _Aktion_
- • \`<http://pace.webspeiseplan.de/Meal/123987|Pfefferhacksteak vom Rind mit Pusztasauce, und Pommes frites>\` _6.95€ (*3.45€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Putenbrust in Kräuter Ei | Gebackene Kartoffeln | Feldsalat | Kräuteröl>\` _8.00€ (*4.50€*)_
 
 
 _Vegetarisch_
- • \`<http://pace.webspeiseplan.de/Meal/123988|Wrap gefüllt mit mexikanischen Gemüse und Fetawürfel, Tomaten-Dip>\` _6.45€ (*2.95€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Gebackener Feta | Mediterranes Gemüse | Rucola | Olivenöl>\` _7.00€ (*3.50€*)_
+
+
+_Spezial_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Rindergulasch | Kartoffelpüree | Sauerrahm | Blattpetersilie>\` _7.30€ (*3.80€*)_
+
+
+_Dessert_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Grießbrei | Früchtemix>\` _3.90€ (*1.75€*)_
 
 
 _Suppe/Eintopf_
- • \`<http://pace.webspeiseplan.de/Meal/123989|Chili sin Carne, gehackte Kräuter>\` _2.5€ (*1.13€*)_
- • \`<http://pace.webspeiseplan.de/Meal/123990|Chili sin Carne, gehackte Kräuter>\` _3.55€ (*1.60€*)_
- • \`<http://pace.webspeiseplan.de/Meal/123991|Erbseneintopf mit Kasselerfleisch, gehackte Kräuter>\` _2.5€ (*1.13€*)_
- • \`<http://pace.webspeiseplan.de/Meal/123992|Erbseneintopf mit Kasselerfleisch, gehackte Kräuter>\` _3.55€ (*1.60€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|Kartoffelsuppe | Wurstscheiben>\` _3.90€ (*1.75€*)_
 
 _Preisangabe_: In Klammern mit Zuschuss von 3.50€
-_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>
+_Source_: <https://pace.berlin/|PACE>
 
 *Do you have questions, comments or improvements? Feel free to ask questions here.*",
 }

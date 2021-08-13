@@ -3,18 +3,18 @@ const nfetch = require('node-fetch')
 const fs = require('fs')
 
 // const log = console.log
-console.log = () => {}
+// console.log = () => {}
 
 describe('index', () => {
   it('should print the menu', async () => {
     jest.useFakeTimers()
-    jest.setSystemTime(new Date(2019, 10, 15))
+    jest.setSystemTime(new Date(2021, 7, 13))
 
     process.env.SLACK_CHANNEL = 'channelID'
     process.env.SLACK_TOKEN = 'SlackToken'
 
     nfetch
-      .mockResolvedValueOnce({ json: () => JSON.parse(fs.readFileSync('src/tests/example-2019-11-15.json', 'utf8')) })
+      .mockResolvedValueOnce({ json: () => JSON.parse(fs.readFileSync('src/tests/example-2021-08-13.json', 'utf8')) })
       .mockResolvedValueOnce({ ok: true })
 
     const index = require('./index')

@@ -13,15 +13,15 @@ holidayMap['2020501'] = { channel: `${config.slackChannel}`, text: '_The Munch-B
 holidayMap['20201125'] = { channel: `${config.slackChannel}`, text: '_The Munch-Bot kindly presents:_ *Weihnachten*\n\n' }
 
 const aggregateCategories = [
-  { id: 1, name: 'Essentia', kategorie: [43, 44, 45, 121] },
-  { id: 2, name: 'Tagesgericht', kategorie: [46, 47] },
-  { id: 3, name: 'Aktion', kategorie: [48] },
-  { id: 4, name: 'Vegetarisch', kategorie: [49] },
-  { id: 5, name: 'Spezial', kategorie: [50, 51, 52] },
-  { id: 6, name: 'Suppe/Eintopf', kategorie: [53, 54, 55, 57] },
-  { id: 7, name: 'Dessert', kategorie: [58, 56] }
+  { id: 1, name: 'Essentia', kategorie: /essentia/i },
+  { id: 2, name: 'Tagesgericht', kategorie: /tagesgericht/i },
+  { id: 3, name: 'Aktion', kategorie: /aktion/i },
+  { id: 4, name: 'Vegetarisch', kategorie: /vegetarisch/i },
+  { id: 5, name: 'Spezial', kategorie: /spezial/i },
+  { id: 6, name: 'Suppe/Eintopf', kategorie: /suppe|eintopf/i },
+  { id: 7, name: 'Dessert', kategorie: /dessert/i },
+  { id: 1000, name: 'Unbekannt', kategorie: /./ }
 ]
-const unknownCategory = { id: 1000, name: 'Unbekannt', kategorie: [] }
 
 exports.handler = async () => {
   console.log(`start munch-bot with channel ${config.slackChannel}`)
@@ -67,11 +67,10 @@ function extractMenueMessage (json) {
   const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`
 
   console.log('extract menu with day -> ' + dayKey)
-  const gerichte = json.content
-    .filter(item => item.speiseplanAdvanced.outletID === 4)
-    .map(item => item.speiseplanGerichtData
-      .filter(gerichtData => gerichtData.speiseplanAdvancedGericht.datum.startsWith(dayKey)))
-    .filter(array => array.length !== 0)
+  const gerichte = json.data.filter(({ outlet, date, mealtime }) =>
+    outlet === 'papa' &&
+    date === dayKey
+  )
 
   if (!gerichte || gerichte.length === 0) {
     console.log('no meals are found for today: ' + JSON.stringify(json))
@@ -83,29 +82,22 @@ function extractMenueMessage (json) {
 
   return foundMeals.map(category => {
     const kategorie = `\n\n_${category.name}_\n`
-    const meals = category.meals.map(meal => ` • \`<http://pace.webspeiseplan.de/Meal/${meal.id}|${meal.name}>\` _${meal.price}_`).join('\n')
+    const meals = category.meals.map(meal => ` • \`<https://api.pace.berlin/foodfinder?lang=de&outlet={meal.outlet}|${meal.name}>\` _${meal.price}_`).join('\n')
     return `${kategorie}${meals}`
   }).join('\n')
 }
 
 function extractCategoriesWithMeals (gerichte) {
   const formattedMeals = []
-  for (const gericht of gerichte[0]) {
+  for (const gericht of gerichte) {
     if (!gericht) continue
 
-    const price = getPrice(gericht.zusatzinformationen)
+    const price = getPrice(gericht.ProductPrice)
     if (!price) continue
 
-    const kategorieID = gericht.speiseplanAdvancedGericht.gerichtkategorieID
-    let aggregateCategory = aggregateCategories
-      .find(aggregateCategory => aggregateCategory.kategorie
-        .find(id => id === kategorieID)
-      )
-
-    if (!aggregateCategory) {
-      console.log('categoryId not found: ' + kategorieID)
-      aggregateCategory = unknownCategory
-    }
+    const kategorieID = gericht.MenuName
+    const aggregateCategory = aggregateCategories
+      .find(aggregateCategory => aggregateCategory.kategorie.test(kategorieID))
 
     if (!formattedMeals.some(category => category.kategorieId === aggregateCategory.id)) {
       formattedMeals.push({ kategorieId: aggregateCategory.id, name: aggregateCategory.name, meals: [] })
@@ -113,7 +105,7 @@ function extractCategoriesWithMeals (gerichte) {
 
     formattedMeals
       .find(category => category.kategorieId === aggregateCategory.id)
-      .meals.push({ name: removeLinebreak(fixDoubleQuotes(gericht.speiseplanAdvancedGericht.gerichtname)), id: gericht.speiseplanAdvancedGericht.id, price })
+      .meals.push({ name: removeLinebreak(fixDoubleQuotes(gericht.GastDesc)), outlet: gericht.outlet, price })
   }
 
   return formattedMeals
@@ -124,17 +116,18 @@ function getPrice (info) {
     return
   }
 
-  let price
-  if (info.mitarbeiterpreisDecimal2) {
-    price = printPrice(info.mitarbeiterpreisDecimal2)
-    if (info.gaestepreisDecimal2) { // maybe not needed anymore
-      price += ' / Menü: ' + printPrice(info.gaestepreisDecimal2)
-    }
-  } else if (info.price3Decimal2 && info.price4Decimal2) { // maybe not needed anymore
-    price = 'klein: ' + printPrice(info.price3Decimal2) + ' / groß: ' + printPrice(info.price4Decimal2)
-  }
+  return printPrice(info)
+  // let price
+  // if (info.ProductPrice) {
+  //   price = printPrice(info.ProductPrice)
+  //   if (info.gaestepreisDecimal2) { // maybe not needed anymore
+  //     price += ' / Menü: ' + printPrice(info.gaestepreisDecimal2)
+  //   }
+  // } else if (info.price3Decimal2 && info.price4Decimal2) { // maybe not needed anymore
+  //   price = 'klein: ' + printPrice(info.price3Decimal2) + ' / groß: ' + printPrice(info.price4Decimal2)
+  // }
 
-  return price
+  // return price
 }
 
 function calculate350 (price) {
@@ -176,7 +169,7 @@ function slackMenues (message) {
   const today = new Date()
   const todayString = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear()
   console.log('create body message now with footer and body')
-  const footer = '\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here.*'
+  const footer = '\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Source_: <https://pace.berlin/|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here.*'
   const headerChannel = `_The Munch-Bot kindly presents:_ *Das Menü von heute (${todayString})*`
   const bodyChannel = JSON.stringify({ channel: config.slackChannel, text: `${headerChannel}\n\n${message}\n${footer}` })
 
