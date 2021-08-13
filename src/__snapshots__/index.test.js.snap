@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`index should print the menu 1`] = `
+Array [
+  "https://hooks.slack.com/services/SlackToken",
+  Object {
+    "method": "POST",
+  },
+]
+`;
+
+exports[`index should print the menu 2`] = `
+Object {
+  "channel": "channelID",
+  "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute (15.11.2019)*
+
+
+
+_Essentia_
+ • \`<http://pace.webspeiseplan.de/Meal/123982|Penne mit gebratenen Artischocken, Pilzen und Parmesan>\` _6.95€ (*3.45€*)_
+ • \`<http://pace.webspeiseplan.de/Meal/123983|Beerenstrudel mit Soja-Vanille-Milch, Penne mit gebratenen Artischocken, Pilzen und Parmesan>\` _7.45€ (*3.95€*)_
+ • \`<http://pace.webspeiseplan.de/Meal/123984|Beerenstrudel mit Soja-Vanille-Milch>\` _1.45€ (*0.65€*)_
+
+
+_Tagesgericht_
+ • \`<http://pace.webspeiseplan.de/Meal/123985|Gebratenes Lachsfilet mit Zucchiniragoût und Wildreis>\` _7.95€ (*4.45€*)_
+ • \`<http://pace.webspeiseplan.de/Meal/123986|Gulasch vom Hähnchen und der Pute Leipziger Allerlei und Salzkartoffeln>\` _6.45€ (*2.95€*)_
+
+
+_Aktion_
+ • \`<http://pace.webspeiseplan.de/Meal/123987|Pfefferhacksteak vom Rind mit Pusztasauce, und Pommes frites>\` _6.95€ (*3.45€*)_
+
+
+_Vegetarisch_
+ • \`<http://pace.webspeiseplan.de/Meal/123988|Wrap gefüllt mit mexikanischen Gemüse und Fetawürfel, Tomaten-Dip>\` _6.45€ (*2.95€*)_
+
+
+_Suppe/Eintopf_
+ • \`<http://pace.webspeiseplan.de/Meal/123989|Chili sin Carne, gehackte Kräuter>\` _2.5€ (*1.13€*)_
+ • \`<http://pace.webspeiseplan.de/Meal/123990|Chili sin Carne, gehackte Kräuter>\` _3.55€ (*1.60€*)_
+ • \`<http://pace.webspeiseplan.de/Meal/123991|Erbseneintopf mit Kasselerfleisch, gehackte Kräuter>\` _2.5€ (*1.13€*)_
+ • \`<http://pace.webspeiseplan.de/Meal/123992|Erbseneintopf mit Kasselerfleisch, gehackte Kräuter>\` _3.55€ (*1.60€*)_
+
+_Preisangabe_: In Klammern mit Zuschuss von 3.50€
+_Quelle_: <http://pace.webspeiseplan.de/Menu|PACE>
+
+*Do you have questions, comments or improvements? Feel free to ask questions here.*",
+}
+`;
