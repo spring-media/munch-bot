@@ -22,7 +22,7 @@
     "node-aws-lambda": "0.1.8"
   },
   "dependencies": {
-    "node-fetch": "2.6.0"
+    "node-fetch": "2.6.1"
   },
   "repository": {
     "type": "git",
