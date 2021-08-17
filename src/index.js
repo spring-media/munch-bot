@@ -3,14 +3,17 @@
 const nfetch = require('node-fetch')
 const config = require('./config')
 
-const holidayMap = {}
-
-holidayMap['2020118'] = { channel: `${config.slackChannel}`, text: '_The Munch-Bot kindly presents:_ *Karfreitag*\n\n' }
-holidayMap['2020313'] = { channel: `${config.slackChannel}`, text: '_The Munch-Bot kindly presents:_ *Ostermontag*\n\n' }
-holidayMap['2020401'] = { channel: `${config.slackChannel}`, text: '_The Munch-Bot kindly presents:_ *Tag der Arbeit*\n\n' }
-holidayMap['2020421'] = { channel: `${config.slackChannel}`, text: '_The Munch-Bot kindly presents:_ *Himmelfahrt*\n\n' }
-holidayMap['2020501'] = { channel: `${config.slackChannel}`, text: '_The Munch-Bot kindly presents:_ *Pfingsmontag*\n\n' }
-holidayMap['20201125'] = { channel: `${config.slackChannel}`, text: '_The Munch-Bot kindly presents:_ *Weihnachten*\n\n' }
+const holidayMap = {
+  '2021-10-03': { title: '*Tag der deutschen Einheit*' },
+  '2021-12-25': { title: '*Weihnachten*' },
+  '2022-03-08': { title: '*Internationaler Frauentag*' },
+  '2022-04-15': { title: '*Karfreitag*' },
+  '2022-04-18': { title: '*Ostermontag*' },
+  '2022-05-26': { title: '*Christi Himmelfahrt*' },
+  '2022-06-06': { title: '*Pfingstmontag*' },
+  '2022-10-03': { title: '*Tag der Deutschen Einhei*' },
+  '2022-12-25': { title: '*Weihnachten*' }
+}
 
 const aggregateCategories = [
   { id: 1, name: 'Essentia', kategorie: /essentia/i },
@@ -29,35 +32,37 @@ const aggregateCategories = [
 exports.handler = async () => {
   console.log(`start munch-bot with channel ${config.slackChannel}`)
 
-  if (!isHoliday()) {
-    const weekday = new Date().getDay()
-    if (weekday < 1 || weekday > 5) {
-      console.log('Today is no workday! I will enjoy the weekend!')
-      return
-    }
-
-    console.log('fetch menu from pace')
-    const fetchOptions =
-        {
-          headers: {
-            Referer: 'https://pace.berlin/',
-            Accept: 'application/json',
-            apiKey: '606a6a5f837e92551fa1f85d9311553dd3b4afd7'
-          }
-        }
-    return nfetch(`https://api.pace.berlin/api/foodfinder/list/de/all/1?_=${new Date().getTime()}`, fetchOptions)
-      .then(res => res.json())
-      .then(json => slackMenues(extractMenueMessage(json, 'papa'), extractMenueMessage(json, 'canteen')))
-      .catch(err => console.log(err, err.stack))
+  if (await isHoliday()) {
+    return
   }
+
+  const weekday = new Date().getDay()
+  if (weekday < 1 || weekday > 5) {
+    console.log('Today is no workday! I will enjoy the weekend!')
+    return
+  }
+
+  console.log('fetch menu from pace')
+  const fetchOptions =
+      {
+        headers: {
+          Referer: 'https://pace.berlin/',
+          Accept: 'application/json',
+          apiKey: '606a6a5f837e92551fa1f85d9311553dd3b4afd7'
+        }
+      }
+  return nfetch(`https://api.pace.berlin/api/foodfinder/list/de/all/1?_=${new Date().getTime()}`, fetchOptions)
+    .then(res => res.json())
+    .then(json => slackMenues(extractMenueMessage(json, 'papa'), extractMenueMessage(json, 'canteen')))
+    .catch(err => console.log(err, err.stack))
 }
 
-function isHoliday () {
+async function isHoliday () {
   const today = new Date()
-  const todayString = today.getFullYear() + '' + today.getMonth() + '' + today.getDate()
+  const todayString = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`
   if (todayString in holidayMap) {
     console.log('found holiday ')
-    sendSlack(JSON.stringify(holidayMap[todayString]))
+    await slackMessage(holidayMap[todayString])
     return true
   }
 
@@ -78,7 +83,6 @@ function extractMenueMessage (json, outletName) {
 
   if (!gerichte || gerichte.length === 0) {
     console.log('no meals are found for today: ' + JSON.stringify(json))
-    slackMessage('Unfortunately PACE does not provide food information today :hankey:')
     throw new Error('No meals found for ' + dayKey)
   }
 
@@ -161,10 +165,8 @@ function fmt (str) {
   return ('0' + str).slice(-2)
 }
 
-function slackMessage (message) {
-  const today = new Date()
-  const todayString = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear()
-  const headerChannel = `_The Munch-Bot kindly presents (${todayString}):_`
+function slackMessage ({ title = '', message = '' }) {
+  const headerChannel = `_The Munch-Bot kindly presents:_ ${title}`
   const bodyChannel = JSON.stringify({ channel: config.slackChannel, text: `${headerChannel}\n\n${message}` })
   sendSlack(bodyChannel)
 }
