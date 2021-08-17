@@ -168,7 +168,7 @@ function fmt (str) {
 function slackMessage ({ title = '', message = '' }) {
   const headerChannel = `_The Munch-Bot kindly presents:_ ${title}`
   const bodyChannel = JSON.stringify({ channel: config.slackChannel, text: `${headerChannel}\n\n${message}` })
-  sendSlack(bodyChannel)
+  return sendSlack(bodyChannel)
 }
 
 function slackMenues (messagePapa, messageCanteen) {
@@ -178,14 +178,12 @@ function slackMenues (messagePapa, messageCanteen) {
   const footer = '\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Source_: <https://pace.berlin/|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here.*'
   const headerChannel = `_The Munch-Bot kindly presents:_ *Das Menü von heute (${todayString})*`
   const bodyChannel = JSON.stringify({ channel: config.slackChannel, text: `${headerChannel}\n\n\n*------Papa-----*${messagePapa}\n\n\n*------Canteen-----*${messageCanteen}\n${footer}` })
-
-  console.log('send to slack now with message: ' + bodyChannel)
-  sendSlack(bodyChannel)
+  return sendSlack(bodyChannel)
 }
 
 function sendSlack (body) {
   console.log('send to slack now with message: ' + body)
-  nfetch(
+  return nfetch(
     'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
     { method: 'POST', body: body }
   ).then(function (res) {
