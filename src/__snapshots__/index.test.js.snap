@@ -12,63 +12,72 @@ Array [
 exports[`index should print the menu 2`] = `
 Object {
   "channel": "channelID",
-  "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute (13.8.2021)*
+  "text": "_The Munch-Bot kindly presents:_ *Das Menü von heute (9.9.2021)*
 
 
 *------Papa-----*
 
-_Essentia_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Spaghetti | Karotten-Pesto | Blattpetersilie>\` _6.90€ (*3.40€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Spaghetti Carbonara>\` _7.30€ (*3.80€*)_
+_Salat_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Salat nach Gewicht  100 gr. / 1,50 € Salat nach Gewicht>\` _1.50€ (*0.68€*)_
 
 
-_Tagesgericht_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Gebratenes Seelachsfilet | Kartoffelwürfel | Balsamico-Linsengemüse>\` _7.65€ (*4.15€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Vegane Kartoffelspalten | Ofengemüse | Curry-Dip>\` _7.10€ (*3.60€*)_
-
-
-_Aktion_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Putenbrust in Kräuter Ei | Gebackene Kartoffeln | Feldsalat | Kräuteröl>\` _8.00€ (*4.50€*)_
-
-
-_Vegetarisch_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Gebackener Feta | Mediterranes Gemüse | Rucola | Olivenöl>\` _7.00€ (*3.50€*)_
-
-
-_Spezial_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Rindergulasch | Kartoffelpüree | Sauerrahm | Blattpetersilie>\` _7.30€ (*3.80€*)_
-
-
-_Dessert_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Grießbrei | Früchtemix>\` _3.90€ (*1.75€*)_
+_Unbekannt_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Obst nach Gewicht | Obst nach Gewicht |>\` _1.50€ (*0.68€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Schokoladenpudding | Vanillesauce Stachelbeercrumble | Vanillesauce>\` _1.50€ (*0.68€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|frisch gepresster Karottensaft frisch gepresster Orangensaft>\` _2.50€ (*1.13€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Wiener Würstchen>\` _0.80€ (*0.36€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Pfefferbeißer>\` _1.00€ (*0.45€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Bowl | Reis |  Zucchini | Tomate | Mozzarella>\` _7.90€ (*4.40€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Blumenkohl | Brokkoli | Möhrchen | Kohlrabirahmgemüse |>\` _1.50€ (*0.68€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|veget. Gemüseteller>\` _6.50€ (*3.00€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Langkornreis | Salzkartoffeln |>\` _2.00€ (*0.90€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Mediterrane Soja-Gemüsepfanne | reis>\` _7.50€ (*4.00€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Milchreis | Erdbeeren>\` _1.50€ (*0.68€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Milchreis | Erdbeeren>\` _3.90€ (*1.75€*)_
 
 
 _Suppe/Eintopf_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Kartoffelsuppe | Wurstscheiben>\` _3.90€ (*1.75€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Vegetarischer Bohneneintopf>\` _2.50€ (*1.13€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Vegetarischer Bohneneintopf>\` _3.90€ (*1.75€*)_
+
+
+_Tagesgericht_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|gefüllte Paprika | Salzkartoffeln | Tomatenragout>\` _7.20€ (*3.70€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|hausgemachte Pasta | Hähnchen | Brokkoli | Champignons | Sahne>\` _7.90€ (*4.40€*)_
+
+
+_Aktion_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Rumpsteak | Pommes | gebackene Champignons>\` _8.00€ (*4.50€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Hähnchensteak | Pommes | gebackene Champignons>\` _7.90€ (*4.40€*)_
+
+
+_Vegetarisch_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=papa|Maultaschen-Lasagne | Sahnesauce | Rucola>\` _7.20€ (*3.70€*)_
 
 
 *------Canteen-----*
 
 _Counter_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Schwarzer Quinoa | Süßkartoffel | Feldsalat>\` _8.30€ (*4.80€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Roastbeef | Frankfurter Grüne Sauce | Röstkartoffel>\` _9.20€ (*5.70€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Petersilienwurzel | Schwarzbrot | Thymian>\` _3.80€ (*1.71€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Cajun Spiced Lachs | Gemüse-Couscous | Limone | Ingwer>\` _8.50€ (*5.00€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Gefüllte Kürbis-Gnocchi | Baby Leaf | Tomate>\` _8.00€ (*4.50€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Indisches Dal | Granatapfel | Koriander>\` _7.00€ (*3.50€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Weiße Bohnen | Putenbrust | Tomaten-Pesto>\` _8.90€ (*5.40€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Ramen | Huhn | Spinat | Ei>\` _8.00€ (*4.50€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Tafelspitzbrühe | Sellerie | Szechuanpfeffer>\` _4.20€ (*1.89€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Lachsfilet | Linguine | Wirsing | Pulpo>\` _9.10€ (*5.60€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Blumenkohl | Hollandaise | Brösel>\` _6.90€ (*3.40€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Bulgur-Risotto | Geräucherter Tofu | Paprika>\` _7.50€ (*4.00€*)_
 
 
 _Dessert_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Gelbe Grütze | Vanillesauce>\` _1.90€ (*0.85€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Grießflammerie Rote Johannisbeeren>\` _1.90€ (*0.85€*)_
 
 
 _Salat_
  • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Blattsalat | Balsamico | Croûtons>\` _6.00€ (*2.70€*)_
 
 
-_ABEND_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Roastbeef | Frankfurter Grüne Sauce | Röstkartoffel>\` _9.20€ (*5.70€*)_
- • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Indisches Dal | Granatapfel | Koriander>\` _7.00€ (*3.50€*)_
+_Unbekannt_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Weiße Bohnen | Putenbrust | Tomaten-Pesto>\` _8.50€ (*5.00€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Lachsfilet | Linguine | Wirsing | Pulpo>\` _9.10€ (*5.60€*)_
+ • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Bulgur-Risotto | Geräucherter Tofu | Paprika>\` _7.50€ (*4.00€*)_
  • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=canteen|Currywurst | Fritten>\` _6.50€ (*3.00€*)_
 
 _Preisangabe_: In Klammern mit Zuschuss von 3.50€

@@ -8,13 +8,13 @@ console.log = () => {}
 describe('index', () => {
   it('should print the menu', async () => {
     jest.useFakeTimers()
-    jest.setSystemTime(new Date(2021, 7, 13))
+    jest.setSystemTime(new Date(2021, 8, 9))
 
     process.env.SLACK_CHANNEL = 'channelID'
     process.env.SLACK_TOKEN = 'SlackToken'
 
     nfetch
-      .mockResolvedValueOnce({ json: () => JSON.parse(fs.readFileSync('src/tests/example-2021-08-13.json', 'utf8')) })
+      .mockResolvedValueOnce({ json: () => JSON.parse(fs.readFileSync('src/tests/example-2021-09-09.json', 'utf8')) })
       .mockResolvedValueOnce({ ok: true })
 
     const index = require('./index')
