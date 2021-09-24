@@ -15,18 +15,24 @@ const holidayMap = {
   '2022-12-25': { title: '*Weihnachten*' }
 }
 
-const aggregateCategories = [
-  { id: 1, name: 'Essentia', kategorie: /essentia/i },
-  { id: 2, name: 'Tagesgericht', kategorie: /tagesgericht/i },
-  { id: 3, name: 'Aktion', kategorie: /aktion/i },
-  { id: 4, name: 'Vegetarisch', kategorie: /vegetarisch/i },
-  { id: 5, name: 'Spezial', kategorie: /spezial/i },
-  { id: 6, name: 'Counter', kategorie: /counter/i },
-  { id: 7, name: 'Suppe/Eintopf', kategorie: /suppe|eintopf/i },
-  { id: 8, name: 'Salat', kategorie: /salat/i },
-  { id: 9, name: 'Dessert', kategorie: /dessert/i },
-  { id: 10, name: 'ABEND', kategorie: /abend/i },
-  { id: 1000, name: 'Unbekannt', kategorie: /./ }
+const menuNameMatcher = (regex) => ({ MenuName: menuName = '' } = {}) => regex.test(menuName)
+const menuNameExtract = (regex, group = 0) => ({ MenuName: menuName = '' } = {}) => (menuName.match(regex) || [])[1 + group]
+
+// order is important for matching (sorted by id on posting)
+const aggregateGroups = [
+  { id: 11, name: 'DINER', matcher: menuNameMatcher(/diner/i) },
+  { id: 12, name: 'ABEND', matcher: menuNameMatcher(/abend/i) },
+  { id: 7, name: 'Counter', matcher: menuNameMatcher(/counter/i), extraInfo: menuNameExtract(/counter (.+)_/i) },
+  { id: 1, name: 'Essentia', matcher: menuNameMatcher(/essentia/i) },
+  { id: 2, name: 'Tagesgericht', matcher: menuNameMatcher(/tagesgericht/i) },
+  { id: 3, name: 'Aktion', matcher: menuNameMatcher(/aktion/i) },
+  { id: 4, name: 'Vegetarisch/Vegan', matcher: menuNameMatcher(/vegetarisch|vegan|vegi|gemueseteller/i) },
+  { id: 6, name: 'Spezial', matcher: menuNameMatcher(/spezial/i) },
+  { id: 8, name: 'Suppe/Eintopf', matcher: menuNameMatcher(/suppe|eintopf/i), extraInfo: menuNameExtract(/(gross|klein)/i) },
+  { id: 9, name: 'Salat', matcher: menuNameMatcher(/salat/i) },
+  { id: 10, name: 'Dessert', matcher: menuNameMatcher(/dessert|suess|fruchtig/i), extraInfo: menuNameExtract(/(gross|klein)_/i) },
+  { id: 50, name: 'Sonstiges', matcher: menuNameMatcher(/bowl|saefte|wurst|beilage|gemuese|obst/i) },
+  { id: 1000, name: 'Unbekannt', matcher: menuNameMatcher(/.*/) }
 ]
 
 exports.handler = async () => {
@@ -86,16 +92,18 @@ function extractMenueMessage (json, outletName) {
     throw new Error('No meals found for ' + dayKey)
   }
 
-  const foundMeals = extractCategoriesWithMeals(gerichte.filter(({ outlet }) => outlet === outletName))
+  const foundMeals = extractGroupsWithMeals(gerichte.filter(({ outlet }) => outlet === outletName))
 
-  return foundMeals.map(category => {
-    const kategorie = `\n\n_${category.name}_\n`
-    const meals = category.meals.map(meal => ` • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=${meal.outlet}|${meal.name}>\` _${meal.price}_`).join('\n')
+  return foundMeals.map(group => {
+    const kategorie = `\n\n_${group.name}_\n`
+    const meals = group.meals.map(meal => ` • \`<https://api.pace.berlin/foodfinder?lang=de&outlet=${meal.outlet}|${
+      meal.extraInfo ? `(${meal.extraInfo}) ` : ''
+    }${meal.name}>\` _${meal.price}_`).join('\n')
     return `${kategorie}${meals}`
   }).join('\n')
 }
 
-function extractCategoriesWithMeals (gerichte) {
+function extractGroupsWithMeals (gerichte) {
   const formattedMeals = []
   for (const gericht of gerichte) {
     if (!gericht) continue
@@ -103,18 +111,25 @@ function extractCategoriesWithMeals (gerichte) {
     const price = getPrice(gericht.ProductPrice)
     if (!price) continue
 
-    const kategorieID = gericht.MenuName
-    const aggregateCategory = aggregateCategories
-      .find(aggregateCategory => aggregateCategory.kategorie.test(kategorieID))
+    const aggregateGroup = aggregateGroups.find(aggregateGroup => aggregateGroup.matcher(gericht))
 
-    if (!formattedMeals.some(category => category.kategorieId === aggregateCategory.id)) {
-      formattedMeals.push({ kategorieId: aggregateCategory.id, name: aggregateCategory.name, meals: [] })
+    let formattedMeal = formattedMeals.find(group => group.id === aggregateGroup.id)
+    if (!formattedMeal) {
+      formattedMeal = { id: aggregateGroup.id, name: aggregateGroup.name, meals: [] }
+      formattedMeals.push(formattedMeal)
     }
 
-    formattedMeals
-      .find(category => category.kategorieId === aggregateCategory.id)
-      .meals.push({ name: removeLinebreak(fixDoubleQuotes(gericht.GastDesc)), outlet: gericht.outlet, price })
+    const extraInfo = aggregateGroup.extraInfo && aggregateGroup.extraInfo(gericht)
+
+    formattedMeal.meals.push({
+      outlet: gericht.outlet,
+      name: removeLinebreak(fixDoubleQuotes(gericht.GastDesc)),
+      extraInfo,
+      price
+    })
   }
+
+  formattedMeals.sort((a, b) => a.id - b.id)
 
   return formattedMeals
 }
