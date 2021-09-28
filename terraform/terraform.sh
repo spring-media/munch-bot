@@ -31,9 +31,9 @@ fi
 
 
 # determine the binary
-# (usually simple "terraform", but on jenkins "terraform11")
+# (usually simple "terraform", but on jenkins "terraform1")
 TF=terraform
-which terraform11 && TF=terraform11
+which terraform1 && TF=terraform1
 $TF version
 
 
@@ -50,9 +50,10 @@ if [ "$TASK" == "plan" ] || [ "$TASK" == "apply" ]; then
     # To avoid an interrupt, we set "+e" (don't exit if a command returns > 0) for the next command:
     set +e
     $TF plan -detailed-exitcode
+    exitcode=$?
     set -e
-    [ $? -eq 1 ] && echo "Error during terraform plan!" && exit 1
-    [ $? -eq 2 ] && echo "Changes detected"
+    [ $exitcode -eq 1 ] && echo "Error during terraform plan!" && exit 1
+    [ $exitcode -eq 2 ] && echo "Changes detected"
 fi
 
 if [ "$TASK" == "apply" ]; then
