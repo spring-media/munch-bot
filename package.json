@@ -11,8 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "ep-lambda-scripts": "spring-media/ep-lambda-scripts",
-    "jest": "^27.0.6"
+    "ep-lambda-scripts": "spring-media/ep-lambda-scripts"
   },
   "dependencies": {
     "node-fetch": "2.6.1",

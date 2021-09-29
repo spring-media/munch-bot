@@ -7,7 +7,7 @@ console.log = () => {}
 
 describe('index', () => {
   it('should print the menu', async () => {
-    jest.useFakeTimers()
+    jest.useFakeTimers('modern')
     jest.setSystemTime(new Date(2021, 8, 9))
 
     process.env.SLACK_CHANNEL = 'channelID'
