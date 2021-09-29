@@ -35,19 +35,14 @@ node('jenkins-slave-1') {
             }
 
             stage("Eat MunchBot") {
-                withCredentials([
-                    [$class       : 'StringBinding',
-                     credentialsId: 'slack_token',
-                     variable     : 'slackToken']
-                ]) {
-                    sshagent(credentials: ['8e47ac18-bd2c-4a68-b980-9ed2e624ac91']) {
-                        sh "mkdir -p ~/.ssh/"
-                        sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+                sshagent(credentials: ['8e47ac18-bd2c-4a68-b980-9ed2e624ac91']) {
+                    sh "mkdir -p ~/.ssh/"
+                    sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
 
-                        sh 'yarn install; yarn run test; yarn run build'
-                        
-                    }
+                    sh 'yarn install; yarn run test; yarn run build'
+                    
                 }
+                
             }
 
             stage('Terraform - Prod') {
