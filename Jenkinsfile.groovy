@@ -35,12 +35,19 @@ node('jenkins-slave-1') {
             }
 
             stage("Eat MunchBot") {
-                sshagent(credentials: ['8e47ac18-bd2c-4a68-b980-9ed2e624ac91']) {
-                    sh "mkdir -p ~/.ssh/"
-                    sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+                withCredentials([
+                  [$class       : 'FileBinding',
+                   credentialsId: 'npmrc-springmedia-github-packages',
+                   variable     : 'NPMRC']
+                ]) {
+                    sshagent(credentials: ['8e47ac18-bd2c-4a68-b980-9ed2e624ac91']) {
+                        sh 'cp -f $NPMRC .npmrc'
+                        sh "mkdir -p ~/.ssh/"
+                        sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
 
-                    sh 'yarn install; yarn run test; yarn run build'
-                    
+                        sh 'yarn install; yarn run test; yarn run build'
+                        
+                    }
                 }
                 
             }
