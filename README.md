@@ -1,9 +1,9 @@
 # The Munch-Bot
 
 A tiny Lambda Function (http://docs.aws.amazon.com/lambda/latest/dg/welcome.html) that 
-parses the html of the Paparazzi-Menu of the day (http://pace.webspeiseplan.de/) and posts
-it into our #general slack-channel.
-The execution of the Lambda is triggered via a daily Cloudwatch event at 11:30 a.m.
+parses the html of the Paparazzi-Menu of the day (https://pace.berlin/) and posts
+it into our #essen_berlin slack-channel.
+The execution of the Lambda is triggered via a daily Cloudwatch event at 11:00 a.m.
 
 ## Deployment
 
@@ -12,13 +12,12 @@ The role "MinimalLambdaRole" just needs rights to write to Cloudwatch-Logs.
 
 ```
 $ yarn install
-$ gulp deploy
 ```
 
 ## local developement
 
 ```
-$ node lambdaLocal.js
+$ yarn runLocal
 ```
 
 ## next features:
