@@ -40,7 +40,7 @@ node('jenkins-slave-1') {
                    credentialsId: 'npmrc-springmedia-github-packages',
                    variable     : 'NPMRC']
                 ]) {
-                    sshagent(credentials: ['8e47ac18-bd2c-4a68-b980-9ed2e624ac91']) {
+                    sshagent(credentials: ['github-sshkey-ep-tech-user']) {
                         sh 'cp -f $NPMRC .npmrc'
                         sh "mkdir -p ~/.ssh/"
                         sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
