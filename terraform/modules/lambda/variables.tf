@@ -4,7 +4,6 @@ variable "region" {
 
 variable "stage" {}
 
-variable "splunk_api_token" {}
 variable "slack_token" {}
 variable "slack_channel" {}
 
@@ -12,7 +11,7 @@ variable "logging_level" {
   default = "INFO"
 }
 
-variable "lambda_functionname_prefix" {
+variable "lambda_functionname" {
   default = "munch-bot"
 }
 

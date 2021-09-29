@@ -4,25 +4,18 @@
   "description": "crawling pace and alerting slack",
   "main": "index.js",
   "scripts": {
-    "build": "gulp build",
-    "deploy": "gulp deploy",
-    "test": "jest",
+    "test": "ep-lambda-scripts test",
+    "build": "ep-lambda-scripts build --js",
     "runLocal": "node lambdaLocal.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "del": "2.2.2",
-    "gulp": "4.0.2",
-    "gulp-env": "0.4.0",
-    "gulp-install": "1.1.0",
-    "gulp-zip": "4.2.0",
-    "gulp4-run-sequence": "0.0.3",
-    "jest": "^27.0.6",
-    "node-aws-lambda": "0.1.8"
+    "ep-lambda-scripts": "spring-media/ep-lambda-scripts"
   },
   "dependencies": {
-    "node-fetch": "2.6.1"
+    "node-fetch": "2.6.1",
+    "@spring-media/ep-logger": "0.0.8"
   },
   "repository": {
     "type": "git",

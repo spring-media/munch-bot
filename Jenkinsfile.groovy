@@ -3,7 +3,10 @@
 @Library('jenkins-shared-lib') _
 
 
-node('slave-node8') {
+node('jenkins-slave-1') {
+
+    useNodeWithVersion("12")
+
     ansiColor('xterm') {
         shouldBuildSkip = false
         def isMaster = "master" == env.BRANCH_NAME
@@ -26,18 +29,19 @@ node('slave-node8') {
                 printout "Skipping Build of branch $env.BRANCH_NAME"
                 currentBuild.result = 'SUCCESS'
                 stage ("Eat MunchBot") {}
-                stage ("Terraform - Dev") {}
+                stage ("Terraform - Prod") {}
                                 
                 return
             }
 
             stage("Eat MunchBot") {
                 withCredentials([
-                    [$class       : 'StringBinding',
-                     credentialsId: 'slack_token',
-                     variable     : 'slackToken']
+                  [$class       : 'FileBinding',
+                   credentialsId: 'npmrc-springmedia-github-packages',
+                   variable     : 'NPMRC']
                 ]) {
-                    sshagent(credentials: ['8e47ac18-bd2c-4a68-b980-9ed2e624ac91']) {
+                    sshagent(credentials: ['github-sshkey-ep-tech-user']) {
+                        sh 'cp -f $NPMRC .npmrc'
                         sh "mkdir -p ~/.ssh/"
                         sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
 
@@ -45,42 +49,12 @@ node('slave-node8') {
                         
                     }
                 }
+                
             }
 
-            stage('Terraform - Dev') {
-                appsToBuild.each {
-                    terraformDeployment("$it/terraform", "base dev")
-                }  
+            stage('Terraform - Prod') {
+               terraformDeployment("terraform", "base prod")  
             }
-
-            stash name: 'modules', includes: appsToBuild.join("/,") + "/"
         }
     }
-}
-
-
-stage('Prod Deploy?') {
-    if (!shouldBuildSkip && "master" == env.BRANCH_NAME) {
-        echo "Hey Mr. Dev, are you doing all right?"
-
-        timeout(time: 1, unit: 'DAYS') {
-            input 'Continue?'
-        }
-    }
-}
-
-node('slave-node8') {
-
-    if (shouldBuildSkip || "master" != env.BRANCH_NAME) {
-        printout "Building Branch $env.BRANCH_NAME successfully!!"
-        currentBuild.result = 'SUCCESS'
-        return
-    }
-
-    unstash 'modules'
-
-    stage('Terraform - Prod') {
-        terraformDeployment("$it/terraform", "base prod")
-    }
-
 }

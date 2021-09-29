@@ -3,6 +3,9 @@
 const nfetch = require('node-fetch')
 const config = require('./config')
 
+const Logger = require('@spring-media/ep-logger').Logger;
+const logger = new Logger('munchBot');
+
 const holidayMap = {
   '2021-10-03': { title: '*Tag der deutschen Einheit*' },
   '2021-12-25': { title: '*Weihnachten*' },
@@ -36,7 +39,7 @@ const aggregateGroups = [
 ]
 
 exports.handler = async () => {
-  console.log(`start munch-bot with channel ${config.slackChannel}`)
+  logger.info(`start munch-bot with channel ${config.slackChannel}`)
 
   if (await isHoliday()) {
     return
@@ -44,11 +47,11 @@ exports.handler = async () => {
 
   const weekday = new Date().getDay()
   if (weekday < 1 || weekday > 5) {
-    console.log('Today is no workday! I will enjoy the weekend!')
+    logger.info('Today is no workday! I will enjoy the weekend!')
     return
   }
 
-  console.log('fetch menu from pace')
+  logger.info('fetch menu from pace')
   const fetchOptions =
       {
         headers: {
@@ -60,14 +63,14 @@ exports.handler = async () => {
   return nfetch(`https://api.pace.berlin/api/foodfinder/list/de/all/1?_=${new Date().getTime()}`, fetchOptions)
     .then(res => res.json())
     .then(json => slackMenues(extractMenueMessage(json, 'papa'), extractMenueMessage(json, 'canteen')))
-    .catch(err => console.log(err, err.stack))
+    .catch(err => logger.error(err, err.stack))
 }
 
 async function isHoliday () {
   const today = new Date()
   const todayString = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`
   if (todayString in holidayMap) {
-    console.log('found holiday ')
+    logger.info('found holiday ')
     await slackMessage(holidayMap[todayString])
     return true
   }
@@ -76,11 +79,11 @@ async function isHoliday () {
 }
 
 function extractMenueMessage (json, outletName) {
-  console.log('extract menu and create slack json')
+  logger.info('extract menu and create slack json')
   const today = new Date()
   const dayKey = `${today.getFullYear()}-${fmt(today.getMonth() + 1)}-${fmt(today.getDate())}`
 
-  console.log('extract menu with day -> ' + dayKey)
+  logger.info('extract menu with day -> ' + dayKey)
   const gerichte = json.data.filter(({ outlet, date, mealtime }) =>
     outlet === outletName &&
     date === dayKey &&
@@ -88,7 +91,7 @@ function extractMenueMessage (json, outletName) {
   )
 
   if (!gerichte || gerichte.length === 0) {
-    console.log('no meals are found for today: ' + JSON.stringify(json))
+    logger.info('no meals are found for today: ' + JSON.stringify(json))
     throw new Error('No meals found for ' + dayKey)
   }
 
@@ -189,7 +192,7 @@ function slackMessage ({ title = '', message = '' }) {
 function slackMenues (messagePapa, messageCanteen) {
   const today = new Date()
   const todayString = today.getDate() + '.' + (today.getMonth() + 1) + '.' + today.getFullYear()
-  console.log('create body message now with footer and body')
+  logger.info('create body message now with footer and body')
   const footer = '\n_Preisangabe_: In Klammern mit Zuschuss von 3.50€\n_Source_: <https://pace.berlin/|PACE>\n\n*Do you have questions, comments or improvements? Feel free to ask questions here.*'
   const headerChannel = `_The Munch-Bot kindly presents:_ *Das Menü von heute (${todayString})*`
   const bodyChannel = JSON.stringify({ channel: config.slackChannel, text: `${headerChannel}\n\n\n*------Papa-----*${messagePapa}\n\n\n*------Canteen-----*${messageCanteen}\n${footer}` })
@@ -197,17 +200,17 @@ function slackMenues (messagePapa, messageCanteen) {
 }
 
 function sendSlack (body) {
-  console.log('send to slack now with message: ' + body)
+  logger.info('send to slack now with message: ' + body)
   return nfetch(
     'https://hooks.slack.com/services/' + config.slackIntegrationHookToken,
     { method: 'POST', body: body }
   ).then(function (res) {
     if (!res.ok) {
       res.text().then(text => {
-        console.log('Response from Slack not ok', res.status, res.statusText, text)
+        logger.info('Response from Slack not ok', res.status, res.statusText, text)
       })
       throw Error(res.statusText)
     }
-    console.log('Successfully sent to slack')
-  }).catch(err => console.log('Error talking to slack', err, err.stack))
+    logger.info('Successfully sent to slack')
+  }).catch(err => logger.info('Error talking to slack', err, err.stack))
 }
