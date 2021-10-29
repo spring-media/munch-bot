@@ -15,5 +15,5 @@ module "trigger" {
   lambda_arn          = module.lambda.arn
   lambda_version      = module.lambda.version
   stage               = terraform.workspace
-  cron_expression     = "cron(0 9 ? * MON-FRI *)"
+  cron_expression     = "cron(0 10 ? * MON-FRI *)"
 }
