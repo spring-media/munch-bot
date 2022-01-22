@@ -14,7 +14,7 @@
     "ep-lambda-scripts": "spring-media/ep-lambda-scripts"
   },
   "dependencies": {
-    "node-fetch": "2.6.1",
+    "node-fetch": "3.1.1",
     "@spring-media/ep-logger": "0.0.8"
   },
   "repository": {
